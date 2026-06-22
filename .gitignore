@@ -1,0 +1,31 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.DS_Store
+
+# Android
+android/.gradle/
+android/local.properties
+android/app/build/
+android/**/*.apk
+android/**/*.aab
+android/captures/
+android/.externalNativeBuild/
+android/.cxx/
+
+# Environment
+.env
+*.env.local
+application-local.yml
+
+# Docker
+.docker/
