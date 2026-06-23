@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -30,6 +31,10 @@
         <activity android:name=".ui.BlockedListActivity" android:exported="false" />
         <activity android:name=".ui.ReportNumberActivity" android:exported="false" />
         <activity android:name=".ui.NumberDetailActivity" android:exported="false" />
+        <activity android:name=".ui.CheckNumberActivity" android:exported="false" />
+        <activity android:name=".ui.StatsActivity" android:exported="false" />
+        <activity android:name=".ui.MyReportsActivity" android:exported="false" />
+        <activity android:name=".ui.BlockedCallLogActivity" android:exported="false" />
 
         <!-- CallScreeningService: intercepts incoming calls and checks against backend -->
         <service
