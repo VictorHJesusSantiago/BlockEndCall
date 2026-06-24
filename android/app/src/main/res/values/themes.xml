@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.BlockEndCall" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        <item name="android:colorBackground">@color/surface</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <!-- Card defaults -->
+        <item name="materialCardViewStyle">@style/Widget.BlockEndCall.Card</item>
+    </style>
+
+    <!-- Card style with subtle shadow and rounded corners -->
+    <style name="Widget.BlockEndCall.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">3dp</item>
+        <item name="cardBackgroundColor">@color/white</item>
+    </style>
+
+    <!-- Gradient header toolbar -->
+    <style name="Theme.BlockEndCall.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@drawable/bg_toolbar_gradient</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="subtitleTextColor">#CCFFFFFF</item>
+    </style>
+
+    <!-- Chip styles per category -->
+    <style name="Widget.BlockEndCall.Chip.Telemarketing" parent="Widget.Material3.Chip.Suggestion">
+        <item name="chipBackgroundColor">@color/cat_telemarketing_bg</item>
+        <item name="android:textColor">@color/cat_telemarketing</item>
+    </style>
+    <style name="Widget.BlockEndCall.Chip.Scam" parent="Widget.Material3.Chip.Suggestion">
+        <item name="chipBackgroundColor">@color/cat_scam_bg</item>
+        <item name="android:textColor">@color/cat_scam</item>
+    </style>
+    <style name="Widget.BlockEndCall.Chip.Robocall" parent="Widget.Material3.Chip.Suggestion">
+        <item name="chipBackgroundColor">@color/cat_robocall_bg</item>
+        <item name="android:textColor">@color/cat_robocall</item>
+    </style>
+
+    <!-- Splash -->
+    <style name="Theme.BlockEndCall.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- FAB danger color -->
+    <style name="Widget.BlockEndCall.FAB.Report" parent="Widget.Material3.ExtendedFloatingActionButton.Icon">
+        <item name="backgroundTint">@color/secondary</item>
+        <item name="tint">@color/white</item>
+    </style>
+
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BlockEndCall</string>
+    <string name="blocked_numbers">Números Bloqueados</string>
+    <string name="report_spam">Reportar Spam</string>
+    <string name="screening_active">Triagem ativa — chamadas spam serão bloqueadas automaticamente</string>
+    <string name="screening_inactive">Triagem inativa — toque para ativar</string>
+    <string name="confirm_logout">Deseja sair?</string>
+</resources>

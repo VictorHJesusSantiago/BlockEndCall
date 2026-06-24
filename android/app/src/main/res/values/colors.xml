@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand -->
+    <color name="primary">#1565C0</color>
+    <color name="primary_dark">#003c8f</color>
+    <color name="primary_light">#5e92f3</color>
+    <color name="on_primary">#FFFFFF</color>
+
+    <!-- Surface -->
+    <color name="surface">#F8F9FD</color>
+    <color name="surface_variant">#ECEEF8</color>
+    <color name="on_surface">#1A1C2E</color>
+    <color name="on_surface_variant">#5B5E72</color>
+
+    <!-- Accent / FAB -->
+    <color name="secondary">#E53935</color>
+    <color name="secondary_light">#FF6F60</color>
+
+    <!-- Category colors -->
+    <color name="cat_telemarketing">#F57C00</color>
+    <color name="cat_telemarketing_bg">#FFF3E0</color>
+    <color name="cat_scam">#C62828</color>
+    <color name="cat_scam_bg">#FFEBEE</color>
+    <color name="cat_robocall">#6A1B9A</color>
+    <color name="cat_robocall_bg">#F3E5F5</color>
+    <color name="cat_debt">#00695C</color>
+    <color name="cat_debt_bg">#E0F2F1</color>
+    <color name="cat_phishing">#AD1457</color>
+    <color name="cat_phishing_bg">#FCE4EC</color>
+    <color name="cat_unknown">#37474F</color>
+    <color name="cat_unknown_bg">#ECEFF1</color>
+
+    <!-- Status -->
+    <color name="confirmed">#D32F2F</color>
+    <color name="pending">#F57F17</color>
+    <color name="safe">#2E7D32</color>
+
+    <!-- Gradient start/end -->
+    <color name="gradient_start">#1565C0</color>
+    <color name="gradient_end">#283593</color>
+
+    <!-- Misc -->
+    <color name="divider">#E0E3F0</color>
+    <color name="shimmer_base">#E0E0E0</color>
+    <color name="shimmer_highlight">#F5F5F5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black_alpha_40">#66000000</color>
+</resources>
