@@ -1,11 +1,15 @@
 package com.blockendcall.android.ui.adapter;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blockendcall.android.R;
 import com.blockendcall.android.databinding.ItemBlockedNumberBinding;
 import com.blockendcall.android.model.BlockedNumber;
 
@@ -62,11 +66,58 @@ public class BlockedNumberAdapter extends RecyclerView.Adapter<BlockedNumberAdap
 
         void bind(BlockedNumber number) {
             binding.tvPhoneNumber.setText(number.getPhoneNumber());
-            binding.tvCategory.setText(number.getCategory());
-            binding.tvReportCount.setText(number.getReportCount() + " reports");
-            binding.tvConfirmed.setVisibility(number.isConfirmed()
-                    ? android.view.View.VISIBLE : android.view.View.GONE);
+            binding.tvCategory.setText(getCategoryLabel(number.getCategory()));
+            binding.tvCategoryEmoji.setText(getCategoryEmoji(number.getCategory()));
+            binding.tvReportCount.setText(number.getReportCount() + " reportes");
+
+            binding.viewCategoryIcon.setBackgroundTintList(
+                    ColorStateList.valueOf(Color.parseColor(getCategoryBgColor(number.getCategory()))));
+
+            if (number.isConfirmed()) {
+                binding.tvConfirmed.setVisibility(View.VISIBLE);
+                binding.tvPending.setVisibility(View.GONE);
+            } else {
+                binding.tvConfirmed.setVisibility(View.GONE);
+                binding.tvPending.setVisibility(View.VISIBLE);
+            }
+
             binding.getRoot().setOnClickListener(v -> listener.onItemClick(number));
+        }
+
+        private String getCategoryEmoji(String category) {
+            if (category == null) return "❓";
+            switch (category) {
+                case "TELEMARKETING": return "📞";
+                case "SCAM":          return "💀";
+                case "ROBOCALL":      return "🤖";
+                case "DEBT_COLLECTOR":return "💳";
+                case "PHISHING":      return "🎣";
+                default:              return "❓";
+            }
+        }
+
+        private String getCategoryLabel(String category) {
+            if (category == null) return "Desconhecido";
+            switch (category) {
+                case "TELEMARKETING": return "Telemarketing";
+                case "SCAM":          return "Golpe / Scam";
+                case "ROBOCALL":      return "Robocall";
+                case "DEBT_COLLECTOR":return "Cobrança";
+                case "PHISHING":      return "Phishing";
+                default:              return "Desconhecido";
+            }
+        }
+
+        private String getCategoryBgColor(String category) {
+            if (category == null) return "#ECEFF1";
+            switch (category) {
+                case "TELEMARKETING": return "#FFF3E0";
+                case "SCAM":          return "#FFEBEE";
+                case "ROBOCALL":      return "#F3E5F5";
+                case "DEBT_COLLECTOR":return "#E0F2F1";
+                case "PHISHING":      return "#FCE4EC";
+                default:              return "#ECEFF1";
+            }
         }
     }
 }

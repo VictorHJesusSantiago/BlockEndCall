@@ -2,11 +2,11 @@ package com.blockendcall.android.ui;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.blockendcall.android.R;
 import com.blockendcall.android.api.ApiClient;
 import com.blockendcall.android.api.BlockedNumberApi;
 import com.blockendcall.android.databinding.ActivityReportNumberBinding;
@@ -26,10 +26,6 @@ public class ReportNumberActivity extends AppCompatActivity {
     private ActivityReportNumberBinding binding;
     private BlockedNumberApi api;
 
-    private static final String[] CATEGORIES = {
-            "TELEMARKETING", "SCAM", "ROBOCALL", "DEBT_COLLECTOR", "PHISHING", "UNKNOWN"
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,20 +38,26 @@ public class ReportNumberActivity extends AppCompatActivity {
         SessionManager session = new SessionManager(this);
         api = ApiClient.getApi(session);
 
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_dropdown_item_1line, CATEGORIES);
-        binding.spinnerCategory.setAdapter(categoryAdapter);
-
         binding.btnReport.setOnClickListener(v -> submitReport());
+    }
+
+    private String getSelectedCategory() {
+        int checkedId = binding.chipGroupCategory.getCheckedChipId();
+        if (checkedId == R.id.chip_telemarketing) return "TELEMARKETING";
+        if (checkedId == R.id.chip_scam)          return "SCAM";
+        if (checkedId == R.id.chip_robocall)      return "ROBOCALL";
+        if (checkedId == R.id.chip_debt)          return "DEBT_COLLECTOR";
+        if (checkedId == R.id.chip_phishing)      return "PHISHING";
+        return "UNKNOWN";
     }
 
     private void submitReport() {
         String phone = binding.etPhoneNumber.getText().toString().trim();
-        String category = binding.spinnerCategory.getSelectedItem().toString();
+        String category = getSelectedCategory();
         String description = binding.etDescription.getText().toString().trim();
 
         if (phone.isEmpty()) {
-            binding.etPhoneNumber.setError("Phone number is required");
+            binding.etPhoneNumber.setError("Número obrigatório");
             return;
         }
 
@@ -74,12 +76,12 @@ public class ReportNumberActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     BlockedNumber bn = response.body().getData();
                     String msg = bn.isConfirmed()
-                            ? "Number confirmed as spam! It is now blocked for all users."
-                            : "Report submitted! " + bn.getReportCount() + " reports so far.";
+                            ? "✅ Número confirmado como spam! Bloqueado para todos os usuários."
+                            : "📢 Reporte enviado! " + bn.getReportCount() + " reportes até agora.";
                     Toast.makeText(ReportNumberActivity.this, msg, Toast.LENGTH_LONG).show();
                     finish();
                 } else {
-                    String msg = response.body() != null ? response.body().getMessage() : "Report failed";
+                    String msg = response.body() != null ? response.body().getMessage() : "Falha ao reportar";
                     Toast.makeText(ReportNumberActivity.this, msg, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -87,7 +89,7 @@ public class ReportNumberActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ApiResponse<BlockedNumber>> call, Throwable t) {
                 setLoading(false);
-                Toast.makeText(ReportNumberActivity.this, "Connection error", Toast.LENGTH_LONG).show();
+                Toast.makeText(ReportNumberActivity.this, "Erro de conexão", Toast.LENGTH_LONG).show();
             }
         });
     }
