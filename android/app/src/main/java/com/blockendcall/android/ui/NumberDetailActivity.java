@@ -34,7 +34,7 @@ public class NumberDetailActivity extends AppCompatActivity {
         String phone = getIntent().getStringExtra("number_phone");
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(phone != null ? phone : "Detail");
+            getSupportActionBar().setTitle(phone != null ? phone : "Detalhe");
         }
 
         SessionManager session = new SessionManager(this);
@@ -65,10 +65,31 @@ public class NumberDetailActivity extends AppCompatActivity {
 
     private void bindData(BlockedNumber number) {
         binding.tvPhoneNumber.setText(number.getPhoneNumber());
-        binding.tvCategory.setText("Category: " + number.getCategory());
-        binding.tvReportCount.setText("Reports: " + number.getReportCount());
-        binding.tvStatus.setText(number.isConfirmed() ? "Status: CONFIRMED SPAM" : "Status: Under review");
-        binding.tvDescription.setText(number.getDescription() != null ? number.getDescription() : "No description");
+        binding.tvCategory.setText(getCategoryLabel(number.getCategory()));
+        binding.tvReportCount.setText(String.valueOf(number.getReportCount()));
+
+        if (number.isConfirmed()) {
+            binding.tvStatusBadge.setText("✓ CONFIRMADO");
+        } else {
+            binding.tvStatusBadge.setText("⏳ EM ANÁLISE");
+        }
+
+        binding.tvDescription.setText(
+                (number.getDescription() != null && !number.getDescription().isEmpty())
+                        ? number.getDescription()
+                        : "Sem descrição disponível.");
+    }
+
+    private String getCategoryLabel(String category) {
+        if (category == null) return "Desconhecido";
+        switch (category) {
+            case "TELEMARKETING":  return "📞 Telemarketing";
+            case "SCAM":           return "💀 Golpe / Scam";
+            case "ROBOCALL":       return "🤖 Robocall";
+            case "DEBT_COLLECTOR": return "💳 Cobrança";
+            case "PHISHING":       return "🎣 Phishing";
+            default:               return "❓ Desconhecido";
+        }
     }
 
     @Override

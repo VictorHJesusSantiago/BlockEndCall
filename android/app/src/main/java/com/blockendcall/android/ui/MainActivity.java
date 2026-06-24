@@ -2,6 +2,7 @@ package com.blockendcall.android.ui;
 
 import android.app.role.RoleManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -9,13 +10,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.blockendcall.android.databinding.ActivityMainBinding;
 import com.blockendcall.android.util.SessionManager;
 
 public class MainActivity extends AppCompatActivity {
-
-    private static final int REQUEST_ROLE = 1001;
 
     private ActivityMainBinding binding;
     private SessionManager session;
@@ -23,9 +23,13 @@ public class MainActivity extends AppCompatActivity {
     private final ActivityResultLauncher<Intent> roleRequestLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
-                    Toast.makeText(this, "Call screening active!", Toast.LENGTH_SHORT).show();
+                    binding.tvScreeningStatus.setText("Triagem ativa — chamadas spam serão bloqueadas");
+                    binding.ivShieldStatus.setImageResource(
+                            com.blockendcall.android.R.drawable.ic_shield);
+                    Toast.makeText(this, "Triagem de chamadas ativada!", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(this, "Screening permission denied — calls won't be blocked automatically", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Permissão negada — chamadas não serão bloqueadas automaticamente",
+                            Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -36,7 +40,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         session = new SessionManager(this);
-        binding.tvWelcome.setText("Hello, " + session.getUserName() + "!");
+        binding.tvWelcome.setText("Olá, " + session.getUserName() + "!");
+
+        updateScreeningStatus();
+        requestNotificationPermission();
+
+        binding.cardCheck.setOnClickListener(v ->
+                startActivity(new Intent(this, CheckNumberActivity.class)));
+
+        binding.cardStats.setOnClickListener(v ->
+                startActivity(new Intent(this, StatsActivity.class)));
+
+        binding.cardBlockedLog.setOnClickListener(v ->
+                startActivity(new Intent(this, BlockedCallLogActivity.class)));
+
+        binding.cardMyReports.setOnClickListener(v ->
+                startActivity(new Intent(this, MyReportsActivity.class)));
 
         binding.btnViewBlocked.setOnClickListener(v ->
                 startActivity(new Intent(this, BlockedListActivity.class)));
@@ -47,25 +66,43 @@ public class MainActivity extends AppCompatActivity {
         binding.btnEnableScreening.setOnClickListener(v -> requestCallScreeningRole());
 
         binding.btnLogout.setOnClickListener(v -> logout());
+    }
 
-        requestCallScreeningRole();
+    private void updateScreeningStatus() {
+        RoleManager roleManager = getSystemService(RoleManager.class);
+        if (roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) {
+            binding.tvScreeningStatus.setText("Triagem ativa — chamadas spam serão bloqueadas");
+            binding.ivShieldStatus.setImageResource(
+                    com.blockendcall.android.R.drawable.ic_shield);
+            binding.btnEnableScreening.setText("Configurar");
+        } else {
+            binding.tvScreeningStatus.setText("Não configurado — toque em Ativar");
+            binding.ivShieldStatus.setImageResource(
+                    com.blockendcall.android.R.drawable.ic_shield_off);
+        }
     }
 
     private void requestCallScreeningRole() {
         RoleManager roleManager = getSystemService(RoleManager.class);
-
         if (!roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) {
             new AlertDialog.Builder(this)
-                    .setTitle("Enable Call Blocking")
-                    .setMessage("Set BlockEndCall as the call screening app to automatically block spam calls.")
-                    .setPositiveButton("Enable", (d, w) -> {
+                    .setTitle("Ativar Bloqueio de Chamadas")
+                    .setMessage("Defina o BlockEndCall como app de triagem para bloquear spam automaticamente.")
+                    .setPositiveButton("Ativar", (d, w) -> {
                         Intent intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING);
                         roleRequestLauncher.launch(intent);
                     })
-                    .setNegativeButton("Later", null)
+                    .setNegativeButton("Agora não", null)
                     .show();
         } else {
-            binding.tvScreeningStatus.setText("Call screening: ACTIVE");
+            Toast.makeText(this, "Triagem já está ativa", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 100);
         }
     }
 
