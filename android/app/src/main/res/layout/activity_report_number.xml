@@ -3,35 +3,83 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/surface">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_toolbar_gradient"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:title="Report Spam Number" />
+            android:title="Reportar Spam"
+            app:titleTextColor="@color/white"
+            app:navigationIconTint="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="20dp">
 
+            <!-- Warning card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="@color/cat_scam_bg"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/cat_scam"
+                app:strokeWidth="1dp"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⚠️"
+                        android:textSize="24sp"
+                        android:layout_marginEnd="12dp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Com 5 reportes, o número é bloqueado automaticamente para todos os usuários."
+                        android:textSize="13sp"
+                        android:textColor="@color/cat_scam"
+                        android:lineSpacingExtra="2dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Phone number field -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Phone number (e.g. +5511999990000)"
+                android:hint="Número de telefone (ex: +5511999990000)"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:startIconDrawable="@drawable/ic_phone_blocked"
                 android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -41,24 +89,90 @@
                     android:inputType="phone" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Category label -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category"
+                android:text="Categoria do spam"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:textColor="@color/on_surface"
+                android:layout_marginBottom="10dp" />
 
-            <Spinner
-                android:id="@+id/spinner_category"
+            <!-- Category chips -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
+                app:singleSelection="true"
+                app:checkedChip="@id/chip_telemarketing"
+                android:layout_marginBottom="20dp">
 
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_telemarketing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📞 Telemarketing"
+                    app:chipBackgroundColor="@color/cat_telemarketing_bg"
+                    android:textColor="@color/cat_telemarketing"
+                    style="@style/Widget.Material3.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_scam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="💀 Golpe/Scam"
+                    app:chipBackgroundColor="@color/cat_scam_bg"
+                    android:textColor="@color/cat_scam"
+                    style="@style/Widget.Material3.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_robocall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🤖 Robocall"
+                    app:chipBackgroundColor="@color/cat_robocall_bg"
+                    android:textColor="@color/cat_robocall"
+                    style="@style/Widget.Material3.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_debt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="💳 Cobrança"
+                    app:chipBackgroundColor="@color/cat_debt_bg"
+                    android:textColor="@color/cat_debt"
+                    style="@style/Widget.Material3.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_phishing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🎣 Phishing"
+                    app:chipBackgroundColor="@color/cat_phishing_bg"
+                    android:textColor="@color/cat_phishing"
+                    style="@style/Widget.Material3.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_unknown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="❓ Desconhecido"
+                    app:chipBackgroundColor="@color/cat_unknown_bg"
+                    android:textColor="@color/cat_unknown"
+                    style="@style/Widget.Material3.Chip.Filter" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Description -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Description (optional)"
+                android:hint="Descrição (opcional)"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
                 android:layout_marginBottom="24dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -67,7 +181,8 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     android:minLines="3"
-                    android:gravity="top" />
+                    android:gravity="top"
+                    android:hint="Descreva o tipo de ligação recebida..." />
             </com.google.android.material.textfield.TextInputLayout>
 
             <ProgressBar
@@ -81,8 +196,12 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_report"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Submit Report" />
+                android:layout_height="56dp"
+                android:text="Enviar Reporte"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:backgroundTint="@color/secondary" />
         </LinearLayout>
     </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
