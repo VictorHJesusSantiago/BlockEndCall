@@ -35,6 +35,8 @@
         <activity android:name=".ui.StatsActivity" android:exported="false" />
         <activity android:name=".ui.MyReportsActivity" android:exported="false" />
         <activity android:name=".ui.BlockedCallLogActivity" android:exported="false" />
+        <activity android:name=".ui.ProfileActivity" android:exported="false" />
+        <activity android:name=".ui.SettingsActivity" android:exported="false" />
 
         <!-- CallScreeningService: intercepts incoming calls and checks against backend -->
         <service

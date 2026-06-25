@@ -58,6 +58,14 @@ dependencies {
     // Shared Preferences wrapper
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
 
+    // Room
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    // Biometric
+    implementation "androidx.biometric:biometric:1.1.0"
+
     // Test
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
