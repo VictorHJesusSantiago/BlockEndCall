@@ -1,7 +1,5 @@
 package com.blockendcall.entity;
 
-import com.blockendcall.enums.CallFrequency;
-import com.blockendcall.enums.SpamSubcategory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(
-    name = "reports",
+    name = "report_confirmations",
     uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "blocked_number_id"})
 )
 @Getter
@@ -17,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Report {
+public class ReportConfirmation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,23 +28,6 @@ public class Report {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocked_number_id", nullable = false)
     private BlockedNumber blockedNumber;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    @Column(length = 60)
-    @Enumerated(EnumType.STRING)
-    private SpamSubcategory subcategory;
-
-    @Column(name = "caller_name", length = 100)
-    private String callerName;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "call_frequency", length = 30)
-    private CallFrequency callFrequency;
-
-    @Column(name = "typical_call_hour")
-    private Integer typicalCallHour;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default
