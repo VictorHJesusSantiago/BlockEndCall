@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="Termos de Uso"
+        app:navigationIconTint="?attr/colorOnSurface"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="TERMOS DE USO - BlockEndCall\n\n1. ACEITAÇÃO DOS TERMOS\nAo usar o BlockEndCall, você concorda com estes termos.\n\n2. USO DO SERVIÇO\nO BlockEndCall é uma plataforma comunitária para reporte e identificação de números spam. Os dados são fornecidos pela comunidade.\n\n3. RESPONSABILIDADE\nO BlockEndCall não garante 100% de precisão nos dados. Use com bom senso.\n\n4. DADOS PESSOAIS\nSeus dados são tratados conforme nossa Política de Privacidade e a LGPD.\n\n5. CONDUTA\nÉ proibido usar o serviço para fins maliciosos, como reporte falso de números legítimos.\n\n6. MODIFICAÇÕES\nPodemos alterar estes termos com aviso prévio.\n\nAo continuar usando o app, você aceita estes termos."
+            android:textSize="14sp"/>
+    </ScrollView>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_accept"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Aceito os Termos"
+        android:visibility="gone"/>
+</LinearLayout>
