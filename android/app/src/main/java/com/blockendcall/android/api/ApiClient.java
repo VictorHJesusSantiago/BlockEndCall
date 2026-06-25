@@ -1,5 +1,7 @@
 package com.blockendcall.android.api;
 
+import android.content.Context;
+
 import com.blockendcall.android.BuildConfig;
 import com.blockendcall.android.util.SessionManager;
 
@@ -16,7 +18,34 @@ public class ApiClient {
     private static Retrofit retrofit;
     private static BlockedNumberApi api;
 
+    // Legacy singleton (used by existing activities)
     public static BlockedNumberApi getApi(SessionManager session) {
+        if (api == null) {
+            api = buildRetrofit(session).create(BlockedNumberApi.class);
+        }
+        return api;
+    }
+
+    // Context-based singleton for new activities
+    private SessionManager session;
+    private static volatile ApiClient INSTANCE;
+
+    private ApiClient(Context context) {
+        this.session = new SessionManager(context);
+    }
+
+    public static ApiClient getInstance(Context context) {
+        if (INSTANCE == null) {
+            synchronized (ApiClient.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new ApiClient(context.getApplicationContext());
+                }
+            }
+        }
+        return INSTANCE;
+    }
+
+    public BlockedNumberApi getApi() {
         if (api == null) {
             api = buildRetrofit(session).create(BlockedNumberApi.class);
         }
@@ -26,6 +55,7 @@ public class ApiClient {
     public static void reset() {
         retrofit = null;
         api = null;
+        INSTANCE = null;
     }
 
     private static Retrofit buildRetrofit(SessionManager session) {
