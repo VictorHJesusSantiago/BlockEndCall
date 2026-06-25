@@ -30,6 +30,10 @@ public class SessionManager {
         prefs.edit().clear().apply();
     }
 
+    public void saveUserName(String name) {
+        prefs.edit().putString(KEY_USER_NAME, name).apply();
+    }
+
     public String getToken() { return prefs.getString(KEY_TOKEN, null); }
     public long getUserId() { return prefs.getLong(KEY_USER_ID, -1); }
     public String getUserName() { return prefs.getString(KEY_USER_NAME, null); }
