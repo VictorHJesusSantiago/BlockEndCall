@@ -1,5 +1,6 @@
 package com.blockendcall.controller;
 
+import com.blockendcall.dto.request.BatchCheckRequest;
 import com.blockendcall.dto.request.ReportNumberRequest;
 import com.blockendcall.dto.request.WhitelistRequest;
 import com.blockendcall.dto.response.ApiResponse;
@@ -21,6 +22,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/numbers")
@@ -98,6 +101,24 @@ public class BlockedNumberController {
     public ResponseEntity<ApiResponse<Void>> whitelist(@PathVariable Long id) {
         blockedNumberService.adminWhitelist(id);
         return ResponseEntity.ok(ApiResponse.ok("Número adicionado à whitelist", null));
+    }
+
+    @PostMapping("/check-batch")
+    @Operation(summary = "Check multiple numbers at once — max 20 (no auth)")
+    public ResponseEntity<ApiResponse<List<NumberCheckResponse>>> checkBatch(
+            @Valid @RequestBody BatchCheckRequest request) {
+        List<NumberCheckResponse> results = blockedNumberService.checkBatch(request.getPhoneNumbers());
+        return ResponseEntity.ok(ApiResponse.ok(results));
+    }
+
+    @GetMapping("/check-enhanced/{phoneNumber}")
+    @Operation(summary = "Enhanced number check with public/personal whitelist status",
+               security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<ApiResponse<NumberCheckResponse>> checkEnhanced(
+            @PathVariable String phoneNumber,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        NumberCheckResponse result = blockedNumberService.getEnhancedCheck(phoneNumber, userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.ok(result));
     }
 
     @DeleteMapping("/{id}")
