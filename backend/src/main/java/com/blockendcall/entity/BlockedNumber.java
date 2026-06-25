@@ -49,6 +49,10 @@ public class BlockedNumber implements Serializable {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "confirmation_count", nullable = false)
+    @Builder.Default
+    private int confirmationCount = 0;
+
     @OneToMany(mappedBy = "blockedNumber", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Report> reports = new ArrayList<>();
@@ -72,6 +76,10 @@ public class BlockedNumber implements Serializable {
 
     public void incrementFalsePositive() {
         this.falsePositiveCount++;
+    }
+
+    public void incrementConfirmationCount() {
+        this.confirmationCount++;
     }
 
     public int getSpamScore() {
