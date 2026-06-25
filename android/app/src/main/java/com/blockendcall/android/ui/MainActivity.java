@@ -4,6 +4,8 @@ import android.app.role.RoleManager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -12,6 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.blockendcall.android.R;
 import com.blockendcall.android.databinding.ActivityMainBinding;
 import com.blockendcall.android.util.SessionManager;
 
@@ -41,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
         session = new SessionManager(this);
         binding.tvWelcome.setText("Olá, " + session.getUserName() + "!");
+
+        setSupportActionBar(binding.toolbar);
 
         updateScreeningStatus();
         requestNotificationPermission();
@@ -104,6 +109,40 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 100);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_profile) {
+            startActivity(new Intent(this, ProfileActivity.class));
+            return true;
+        }
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        if (id == R.id.action_about) {
+            showAboutDialog();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showAboutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("BlockEndCall")
+                .setMessage("Versão 1.0.0\n\nBlockEndCall é uma plataforma comunitária de proteção contra spam. "
+                        + "Cada reporte que você faz protege toda a comunidade de usuários."
+                        + "\n\nDesenvolvido com Java + Spring Boot + Android.")
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private void logout() {
