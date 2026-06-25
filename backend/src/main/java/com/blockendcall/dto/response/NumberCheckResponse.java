@@ -16,6 +16,8 @@ public class NumberCheckResponse {
     private int spamScore;
     private String description;
     private String riskLevel;
+    private boolean inPublicWhitelist;
+    private boolean inPersonalWhitelist;
 
     public static NumberCheckResponse safe(String phoneNumber) {
         return NumberCheckResponse.builder()
