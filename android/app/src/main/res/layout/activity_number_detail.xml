@@ -146,7 +146,8 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/white">
+                app:cardBackgroundColor="@color/white"
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -165,13 +166,64 @@
 
                     <TextView
                         android:id="@+id/tv_description"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
                         android:textColor="@color/on_surface_variant"
                         android:lineSpacingExtra="3dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Action buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_call"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:text="📞 Ligar"
+                    android:textSize="13sp"
+                    app:cornerRadius="14dp"
+                    style="@style/Widget.Material3.Button.TonalButton" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:text="📤 Compartilhar"
+                    android:textSize="13sp"
+                    app:cornerRadius="14dp"
+                    style="@style/Widget.Material3.Button.OutlinedButton" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_false_positive"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="⚠️  Reportar como Falso Positivo"
+                android:textSize="13sp"
+                app:cornerRadius="14dp"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:textColor="@color/cat_telemarketing"
+                app:strokeColor="@color/cat_telemarketing"
+                android:layout_marginBottom="10dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_copy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📋  Copiar Número"
+                android:textSize="13sp"
+                app:cornerRadius="14dp"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
 
         </LinearLayout>
     </ScrollView>
