@@ -45,6 +45,17 @@ public class User implements UserDetails {
     @Builder.Default
     private boolean active = true;
 
+    @Column(name = "reputation_score", nullable = false)
+    @Builder.Default
+    private int reputationScore = 0;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean suspended = false;
+
+    @Column(name = "terms_accepted_at")
+    private LocalDateTime termsAcceptedAt;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
