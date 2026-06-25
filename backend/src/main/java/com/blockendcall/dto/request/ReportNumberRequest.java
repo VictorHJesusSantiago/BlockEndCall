@@ -1,6 +1,8 @@
 package com.blockendcall.dto.request;
 
+import com.blockendcall.enums.CallFrequency;
 import com.blockendcall.enums.SpamCategory;
+import com.blockendcall.enums.SpamSubcategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -22,4 +24,12 @@ public class ReportNumberRequest {
 
     @Size(max = 500)
     private String description;
+
+    private SpamSubcategory subcategory;
+
+    private String callerName;
+
+    private CallFrequency callFrequency;
+
+    private Integer typicalCallHour;
 }
