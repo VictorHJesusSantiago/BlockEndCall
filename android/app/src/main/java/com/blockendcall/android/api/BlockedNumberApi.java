@@ -8,6 +8,7 @@ import com.blockendcall.android.model.AuthResponse;
 import com.blockendcall.android.model.Badge;
 import com.blockendcall.android.model.BlockedCallLogEntry;
 import com.blockendcall.android.model.BlockedNumber;
+import com.blockendcall.android.model.EnhancedStats;
 import com.blockendcall.android.model.LeaderboardEntry;
 import com.blockendcall.android.model.NumberCheckResult;
 import com.blockendcall.android.model.NumberReportedName;
@@ -83,6 +84,9 @@ public interface BlockedNumberApi {
     // ── Stats (public) ───────────────────────────────────────────────────────
     @GET("api/v1/stats")
     Call<ApiResponse<Stats>> getStats();
+
+    @GET("api/v1/stats/enhanced")
+    Call<ApiResponse<EnhancedStats>> getEnhancedStats();
 
     @GET("api/v1/stats/leaderboard")
     Call<ApiResponse<List<LeaderboardEntry>>> getLeaderboard(@Query("limit") int limit);
