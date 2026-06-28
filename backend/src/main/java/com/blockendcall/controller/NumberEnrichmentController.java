@@ -7,6 +7,7 @@ import com.blockendcall.dto.response.NumberReportedNameResponse;
 import com.blockendcall.dto.response.NumberTimelineResponse;
 import com.blockendcall.service.BlockedNumberService;
 import com.blockendcall.service.NumberEnrichmentService;
+import com.blockendcall.service.OperatorLookupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/numbers")
@@ -27,6 +29,7 @@ public class NumberEnrichmentController {
 
     private final NumberEnrichmentService numberEnrichmentService;
     private final BlockedNumberService blockedNumberService;
+    private final OperatorLookupService operatorLookupService;
 
     @GetMapping("/{id}/reported-names")
     @Operation(summary = "Get reported caller names for a number", security = @SecurityRequirement(name = "bearerAuth"))
@@ -61,5 +64,18 @@ public class NumberEnrichmentController {
             @AuthenticationPrincipal UserDetails userDetails) {
         blockedNumberService.confirmMeToo(numberId, userDetails.getUsername());
         return ResponseEntity.ok(ApiResponse.ok("Confirmação registrada", null));
+    }
+
+    @GetMapping("/ddd/{ddd}")
+    @Operation(summary = "Get city/region for a Brazilian DDD area code (no auth)")
+    public ResponseEntity<ApiResponse<String>> lookupDdd(@PathVariable String ddd) {
+        return ResponseEntity.ok(ApiResponse.ok(operatorLookupService.getAllDdds()
+                .getOrDefault(ddd, "Desconhecido")));
+    }
+
+    @GetMapping("/ddd")
+    @Operation(summary = "Get all Brazilian DDD area codes with city names (no auth)")
+    public ResponseEntity<ApiResponse<Map<String, String>>> getAllDdds() {
+        return ResponseEntity.ok(ApiResponse.ok(operatorLookupService.getAllDdds()));
     }
 }

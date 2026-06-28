@@ -1,6 +1,7 @@
 package com.blockendcall.controller;
 
 import com.blockendcall.dto.response.ApiResponse;
+import com.blockendcall.dto.response.BlockedNumberResponse;
 import com.blockendcall.dto.response.EnhancedStatsResponse;
 import com.blockendcall.dto.response.LeaderboardEntry;
 import com.blockendcall.dto.response.StatsResponse;
@@ -48,5 +49,13 @@ public class StatsController {
     @Operation(summary = "Spam counts grouped by DDD area code (no auth)")
     public ResponseEntity<ApiResponse<Map<String, Long>>> getStatsByDdd() {
         return ResponseEntity.ok(ApiResponse.ok(statsService.getStatsByDdd()));
+    }
+
+    @GetMapping("/top")
+    @Operation(summary = "Top reported numbers by period — DAILY, WEEKLY, MONTHLY (no auth)")
+    public ResponseEntity<ApiResponse<List<BlockedNumberResponse>>> getTopByPeriod(
+            @RequestParam(defaultValue = "WEEKLY") String period,
+            @RequestParam(defaultValue = "10") int limit) {
+        return ResponseEntity.ok(ApiResponse.ok(statsService.getTopByPeriod(period, limit)));
     }
 }

@@ -22,8 +22,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/numbers")
@@ -127,5 +129,27 @@ public class BlockedNumberController {
     public ResponseEntity<ApiResponse<Void>> deleteNumber(@PathVariable Long id) {
         blockedNumberService.deleteNumber(id);
         return ResponseEntity.ok(ApiResponse.ok("Número removido", null));
+    }
+
+    @GetMapping("/autocomplete")
+    @Operation(summary = "Autocomplete phone number prefix — returns up to 10 matching confirmed numbers (no auth)")
+    public ResponseEntity<ApiResponse<List<String>>> autocomplete(@RequestParam String q) {
+        return ResponseEntity.ok(ApiResponse.ok(blockedNumberService.autocomplete(q)));
+    }
+
+    @GetMapping("/search-description")
+    @Operation(summary = "Full-text search in report descriptions (no auth)")
+    public ResponseEntity<ApiResponse<List<BlockedNumberResponse>>> searchByDescription(
+            @RequestParam String q,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.ok(blockedNumberService.searchByDescription(q, pageable)));
+    }
+
+    @PostMapping("/import/csv")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Bulk import phone numbers from CSV (admin only)", security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<ApiResponse<Map<String, Integer>>> importCsv(
+            @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(ApiResponse.ok(blockedNumberService.importFromCsv(file)));
     }
 }
