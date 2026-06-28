@@ -11,11 +11,13 @@ import androidx.core.app.NotificationCompat;
 
 import com.blockendcall.android.R;
 import com.blockendcall.android.ui.CheckNumberActivity;
+import com.blockendcall.android.ui.ReportNumberActivity;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class NotificationHelper {
 
+    public static final String CHANNEL_MAIN    = "blockendcall_main";
     public static final String CHANNEL_BLOCKED = "blocked_calls";
     public static final String CHANNEL_STATS   = "stats_updates";
 
@@ -23,6 +25,12 @@ public class NotificationHelper {
 
     public static void createChannels(Context context) {
         NotificationManager nm = context.getSystemService(NotificationManager.class);
+
+        NotificationChannel main = new NotificationChannel(
+                CHANNEL_MAIN,
+                "BlockEndCall",
+                NotificationManager.IMPORTANCE_HIGH);
+        main.setDescription("Notificações gerais do BlockEndCall");
 
         NotificationChannel blocked = new NotificationChannel(
                 CHANNEL_BLOCKED,
@@ -37,8 +45,48 @@ public class NotificationHelper {
                 NotificationManager.IMPORTANCE_LOW);
         stats.setDescription("Resumo periódico de chamadas bloqueadas");
 
+        nm.createNotificationChannel(main);
         nm.createNotificationChannel(blocked);
         nm.createNotificationChannel(stats);
+    }
+
+    public static void showReportConfirmedNotification(Context ctx, String phoneNumber) {
+        Intent open = new Intent(ctx, CheckNumberActivity.class);
+        open.putExtra("prefill_number", phoneNumber);
+        open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pi = PendingIntent.getActivity(ctx, phoneNumber.hashCode(), open,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = new NotificationCompat.Builder(ctx, CHANNEL_MAIN)
+                .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                .setContentTitle("Reporte Confirmado!")
+                .setContentText("Seu reporte de " + phoneNumber + " foi confirmado pela comunidade")
+                .setAutoCancel(true)
+                .setContentIntent(pi)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .build();
+
+        NotificationManager nm = ctx.getSystemService(NotificationManager.class);
+        nm.notify(("confirmed_" + phoneNumber).hashCode(), notification);
+    }
+
+    public static void showBlockedCallNotification(Context ctx, String phoneNumber, String category) {
+        Intent reportIntent = new Intent(ctx, ReportNumberActivity.class);
+        reportIntent.putExtra("prefill_number", phoneNumber);
+        reportIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent reportPi = PendingIntent.getActivity(ctx, ("report_" + phoneNumber).hashCode(), reportIntent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = new NotificationCompat.Builder(ctx, CHANNEL_BLOCKED)
+                .setSmallIcon(android.R.drawable.ic_menu_close_clear_cancel)
+                .setContentTitle("Chamada Bloqueada")
+                .setContentText(phoneNumber + " (" + getCategoryLabel(category) + ") bloqueada")
+                .setAutoCancel(true)
+                .addAction(android.R.drawable.ic_menu_report_image, "Reportar", reportPi)
+                .build();
+
+        NotificationManager nm = ctx.getSystemService(NotificationManager.class);
+        nm.notify(("blocked_" + phoneNumber).hashCode(), notification);
     }
 
     public static void notifyBlockedCall(Context context, String phoneNumber, String category) {

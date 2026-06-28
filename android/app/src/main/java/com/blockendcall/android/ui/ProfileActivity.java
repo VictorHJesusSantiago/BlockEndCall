@@ -1,6 +1,7 @@
 package com.blockendcall.android.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -14,10 +15,15 @@ import com.blockendcall.android.api.BlockedNumberApi;
 import com.blockendcall.android.databinding.ActivityProfileBinding;
 import com.blockendcall.android.model.ApiResponse;
 import com.blockendcall.android.model.UserProfile;
+import com.blockendcall.android.model.UserReport;
+import com.blockendcall.android.util.NotificationHelper;
 import com.blockendcall.android.util.SessionManager;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -87,6 +93,34 @@ public class ProfileActivity extends AppCompatActivity {
 
         String since = profile.getCreatedAt();
         binding.tvMemberSince.setText(since.length() >= 7 ? since.substring(0, 7) : since);
+
+        checkAndNotifyConfirmedReports();
+    }
+
+    private void checkAndNotifyConfirmedReports() {
+        SharedPreferences seenPrefs = getSharedPreferences("blockendcall_notifications", MODE_PRIVATE);
+        Set<String> seen = new HashSet<>(seenPrefs.getStringSet("seen_confirmed", new HashSet<>()));
+
+        api.getMyReports().enqueue(new Callback<ApiResponse<List<UserReport>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<UserReport>>> call,
+                                   Response<ApiResponse<List<UserReport>>> response) {
+                if (!response.isSuccessful() || response.body() == null || !response.body().isSuccess()) return;
+                List<UserReport> reports = response.body().getData();
+                if (reports == null) return;
+                Set<String> newSeen = new HashSet<>(seen);
+                for (UserReport r : reports) {
+                    if (r.isConfirmed() && r.getPhoneNumber() != null && !seen.contains(r.getPhoneNumber())) {
+                        NotificationHelper.showReportConfirmedNotification(ProfileActivity.this, r.getPhoneNumber());
+                        newSeen.add(r.getPhoneNumber());
+                    }
+                }
+                seenPrefs.edit().putStringSet("seen_confirmed", newSeen).apply();
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<UserReport>>> call, Throwable t) {}
+        });
     }
 
     private void showEditNameDialog() {
