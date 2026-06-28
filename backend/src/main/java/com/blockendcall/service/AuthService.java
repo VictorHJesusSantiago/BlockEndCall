@@ -7,6 +7,7 @@ import com.blockendcall.entity.User;
 import com.blockendcall.repository.UserRepository;
 import com.blockendcall.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -51,6 +53,21 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user);
         return buildAuthResponse(user, token);
+    }
+
+    public void verifyEmail(String token) {
+        // TODO: implement actual email verification via Spring Mail + token DB lookup
+        log.info("Email verified for token: {}", token);
+    }
+
+    public void sendPasswordResetEmail(String email) {
+        // TODO: send actual password reset email via Spring Mail
+        log.info("Password reset email would be sent to: {}", email);
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        // TODO: validate token from DB, update user password
+        log.info("Password reset for token: {}", token);
     }
 
     private AuthResponse buildAuthResponse(User user, String token) {

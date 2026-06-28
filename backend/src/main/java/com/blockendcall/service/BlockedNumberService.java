@@ -15,12 +15,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,6 +39,9 @@ public class BlockedNumberService {
     private final ReportRepository reportRepository;
     private final UserRepository userRepository;
     private final FalsePositiveRepository falsePositiveRepository;
+    private final PersonalWhitelistRepository personalWhitelistRepository;
+    private final PersonalBlacklistRepository personalBlacklistRepository;
+    private final WebhookService webhookService;
 
     @Value("${app.report.threshold:5}")
     private int reportThreshold;
@@ -94,11 +104,15 @@ public class BlockedNumberService {
 
         blockedNumber.incrementReportCount();
 
+        boolean wasConfirmed = blockedNumber.isConfirmed();
         if (!blockedNumber.isWhitelisted() && blockedNumber.getReportCount() >= reportThreshold) {
             blockedNumber.setConfirmed(true);
         }
 
         BlockedNumber saved = blockedNumberRepository.save(blockedNumber);
+        if (!wasConfirmed && saved.isConfirmed()) {
+            webhookService.notifyConfirmed(saved);
+        }
 
         reportRepository.save(Report.builder()
                 .user(user)
@@ -152,6 +166,77 @@ public class BlockedNumberService {
             throw new ResourceNotFoundException("Number not found: " + id);
         }
         blockedNumberRepository.deleteById(id);
+    }
+
+    public NumberCheckResponse getEnhancedCheck(String phoneNumber, String userEmail) {
+        User user = findUser(userEmail);
+        NumberCheckResponse base = checkNumber(phoneNumber);
+        boolean inPersonalWhitelist = personalWhitelistRepository.existsByUserIdAndPhoneNumber(user.getId(), phoneNumber);
+        return NumberCheckResponse.builder()
+                .phoneNumber(base.getPhoneNumber())
+                .blocked(base.isBlocked())
+                .confirmed(base.isConfirmed())
+                .category(base.getCategory())
+                .reportCount(base.getReportCount())
+                .spamScore(base.getSpamScore())
+                .description(base.getDescription())
+                .riskLevel(base.getRiskLevel())
+                .inPersonalWhitelist(inPersonalWhitelist)
+                .build();
+    }
+
+    @Transactional
+    public void confirmMeToo(Long numberId, String userEmail) {
+        BlockedNumber number = blockedNumberRepository.findById(numberId)
+                .orElseThrow(() -> new ResourceNotFoundException("Number not found: " + numberId));
+        number.setConfirmationCount(number.getConfirmationCount() + 1);
+        blockedNumberRepository.save(number);
+    }
+
+    public List<String> autocomplete(String prefix) {
+        return blockedNumberRepository.autocomplete(prefix, PageRequest.of(0, 10));
+    }
+
+    public List<BlockedNumberResponse> searchByDescription(String query, Pageable pageable) {
+        return reportRepository.searchByDescription(query, pageable).stream()
+                .map(BlockedNumberResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Map<String, Integer> importFromCsv(MultipartFile file) {
+        int imported = 0, skipped = 0, errors = 0;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+            boolean firstLine = true;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+                if (firstLine && line.toLowerCase().startsWith("phone")) { firstLine = false; continue; }
+                firstLine = false;
+                String[] parts = line.split(",", 2);
+                String phone = parts[0].trim().replaceAll("[^+\\d]", "");
+                if (phone.isEmpty()) { skipped++; continue; }
+                SpamCategory cat = SpamCategory.UNKNOWN;
+                if (parts.length > 1) {
+                    try { cat = SpamCategory.valueOf(parts[1].trim().toUpperCase()); } catch (Exception ignored) {}
+                }
+                try {
+                    BlockedNumber bn = blockedNumberRepository.findByPhoneNumber(phone)
+                            .orElseGet(() -> BlockedNumber.builder()
+                                    .phoneNumber(phone).category(cat).reportCount(0).build());
+                    bn.setConfirmed(true);
+                    if (bn.getReportCount() < reportThreshold) bn.setReportCount(reportThreshold);
+                    blockedNumberRepository.save(bn);
+                    imported++;
+                } catch (Exception e) { errors++; }
+            }
+        } catch (Exception e) { errors++; }
+        Map<String, Integer> result = new HashMap<>();
+        result.put("imported", imported);
+        result.put("skipped", skipped);
+        result.put("errors", errors);
+        return result;
     }
 
     private User findUser(String email) {
