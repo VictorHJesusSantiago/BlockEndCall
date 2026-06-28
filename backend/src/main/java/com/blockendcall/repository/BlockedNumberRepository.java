@@ -52,4 +52,21 @@ public interface BlockedNumberRepository extends JpaRepository<BlockedNumber, Lo
     @Modifying
     @Query("UPDATE BlockedNumber b SET b.whitelisted = true, b.confirmed = false WHERE b.id = :id")
     void whitelist(@Param("id") Long id);
+
+    Page<BlockedNumber> findAllByConfirmedFalseAndWhitelistedFalse(Pageable pageable);
+
+    @Query("SELECT SUBSTRING(b.phoneNumber, 1, 2) as ddd, COUNT(b) as cnt FROM BlockedNumber b WHERE b.confirmed = true GROUP BY SUBSTRING(b.phoneNumber, 1, 2)")
+    List<Object[]> countByDdd();
+
+    @Query("SELECT b FROM BlockedNumber b WHERE b.reportCount >= :minReports AND b.confirmed = false AND b.whitelisted = false AND b.createdAt >= :since")
+    List<BlockedNumber> findRecentlyReportedAboveThreshold(@Param("minReports") int minReports, @Param("since") LocalDateTime since);
+
+    @Query("SELECT b FROM BlockedNumber b WHERE b.confirmed = false AND b.whitelisted = false AND b.updatedAt < :before AND b.reportCount < :minCount")
+    List<BlockedNumber> findExpiredPending(@Param("before") LocalDateTime before, @Param("minCount") int minCount);
+
+    @Query("SELECT b FROM BlockedNumber b WHERE b.confirmed = true AND b.createdAt >= :since ORDER BY b.reportCount DESC")
+    List<BlockedNumber> findTopByPeriod(@Param("since") LocalDateTime since, Pageable pageable);
+
+    @Query("SELECT b.phoneNumber FROM BlockedNumber b WHERE b.phoneNumber LIKE CONCAT(:prefix,'%') AND b.confirmed = true ORDER BY b.reportCount DESC")
+    List<String> autocomplete(@Param("prefix") String prefix, Pageable pageable);
 }

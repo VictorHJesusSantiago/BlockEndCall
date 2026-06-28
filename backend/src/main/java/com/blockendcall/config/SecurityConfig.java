@@ -1,5 +1,6 @@
 package com.blockendcall.config;
 
+import com.blockendcall.filter.RateLimitFilter;
 import com.blockendcall.security.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,15 +28,21 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
+    private final RateLimitFilter rateLimitFilter;
 
     private static final String[] PUBLIC_ENDPOINTS = {
         "/api/v1/auth/**",
         "/api/v1/numbers/check/**",
         "/api/v1/numbers/check-batch",
+        "/api/v1/numbers/autocomplete",
+        "/api/v1/numbers/search-description",
+        "/api/v1/numbers/ddd/**",
+        "/api/v1/numbers/ddd",
         "/api/v1/stats",
         "/api/v1/stats/enhanced",
         "/api/v1/stats/leaderboard",
         "/api/v1/stats/by-ddd",
+        "/api/v1/stats/top",
         "/api/v1/announcements",
         "/api/v1/public-whitelist/**",
         "/v3/api-docs/**",
@@ -56,6 +63,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authenticationProvider(authenticationProvider())
+            .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
