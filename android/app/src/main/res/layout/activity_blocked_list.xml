@@ -126,6 +126,88 @@
                     android:textColor="@color/white" />
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
+
+        <!-- Period filter chips row -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:paddingBottom="6dp"
+            android:paddingHorizontal="12dp">
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:checkedChip="@id/chip_period_all">
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_period_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Todos"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    app:chipBackgroundColor="#33FFFFFF"
+                    android:textColor="@color/white"/>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_period_week"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Esta semana"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    app:chipBackgroundColor="#33FFFFFF"
+                    android:textColor="@color/white"/>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_period_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Este mês"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    app:chipBackgroundColor="#33FFFFFF"
+                    android:textColor="@color/white"/>
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+        <!-- DDD filter + Sort row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="10dp"
+            android:gravity="center_vertical">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_ddd_filter"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:hint="DDD"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="#66FFFFFF"
+                app:boxBackgroundColor="#22FFFFFF"
+                app:boxCornerRadiusTopStart="20dp"
+                app:boxCornerRadiusTopEnd="20dp"
+                app:boxCornerRadiusBottomStart="20dp"
+                app:boxCornerRadiusBottomEnd="20dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_ddd_filter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:textColor="@color/white"
+                    android:textColorHint="#AAFFFFFF"
+                    android:paddingVertical="8dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
+            <android.widget.Spinner
+                android:id="@+id/spinner_sort"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:spinnerMode="dropdown"
+                android:popupBackground="@color/surface"
+                android:padding="8dp"/>
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
