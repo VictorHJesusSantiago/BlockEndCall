@@ -37,6 +37,9 @@ public class BlockedListActivity extends AppCompatActivity {
     private boolean isLoading = false;
     private String activeCategory = null;
     private String activeSearch = null;
+    private String activePeriod = null; // "WEEK", "MONTH", or null
+    private String activeSort = "reportCount,desc";
+    private String activeDdd = null;
 
     private final Handler searchDebounce = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
@@ -89,14 +92,55 @@ public class BlockedListActivity extends AppCompatActivity {
         binding.chipGroupFilter.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) return;
             int id = checkedIds.get(0);
-            if (id == R.id.chip_filter_all)          activeCategory = null;
+            if (id == R.id.chip_filter_all)               activeCategory = null;
             else if (id == R.id.chip_filter_telemarketing) activeCategory = "TELEMARKETING";
-            else if (id == R.id.chip_filter_scam)    activeCategory = "SCAM";
-            else if (id == R.id.chip_filter_robocall) activeCategory = "ROBOCALL";
-            else if (id == R.id.chip_filter_debt)    activeCategory = "DEBT_COLLECTOR";
-            else if (id == R.id.chip_filter_phishing) activeCategory = "PHISHING";
-            else                                     activeCategory = null;
+            else if (id == R.id.chip_filter_scam)          activeCategory = "SCAM";
+            else if (id == R.id.chip_filter_robocall)      activeCategory = "ROBOCALL";
+            else if (id == R.id.chip_filter_debt)          activeCategory = "DEBT_COLLECTOR";
+            else if (id == R.id.chip_filter_phishing)      activeCategory = "PHISHING";
+            else                                           activeCategory = null;
             resetAndLoad();
+        });
+
+        // Period chips
+        binding.chipGroupPeriod.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.isEmpty()) return;
+            int id = checkedIds.get(0);
+            if (id == R.id.chip_period_all)        activePeriod = null;
+            else if (id == R.id.chip_period_week)  activePeriod = "WEEK";
+            else if (id == R.id.chip_period_month) activePeriod = "MONTH";
+            resetAndLoad();
+        });
+
+        // Sort spinner
+        String[] sortOptions = {"Mais reportados", "Mais recentes", "Por score"};
+        String[] sortValues = {"reportCount,desc", "createdAt,desc", "spamScore,desc"};
+        android.widget.ArrayAdapter<String> sortAdapter = new android.widget.ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, sortOptions);
+        sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerSort.setAdapter(sortAdapter);
+        binding.spinnerSort.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, android.view.View view, int position, long id) {
+                String newSort = sortValues[position];
+                if (!newSort.equals(activeSort)) {
+                    activeSort = newSort;
+                    resetAndLoad();
+                }
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        // DDD filter
+        binding.etDddFilter.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(android.text.Editable s) {
+                String ddd = s.toString().trim();
+                activeDdd = ddd.isEmpty() ? null : ddd;
+                resetAndLoad();
+            }
         });
 
         loadPage();
@@ -118,10 +162,12 @@ public class BlockedListActivity extends AppCompatActivity {
 
         if (activeSearch != null && !activeSearch.isEmpty()) {
             call = api.searchNumbers(activeSearch, currentPage, 20);
+        } else if (activeDdd != null && !activeDdd.isEmpty()) {
+            call = api.searchNumbers(activeDdd, currentPage, 20);
         } else if (activeCategory != null) {
             call = api.listByCategory(activeCategory, currentPage, 20);
         } else {
-            call = api.listNumbers(currentPage, 20, "reportCount,desc");
+            call = api.listNumbers(currentPage, 20, activeSort);
         }
 
         call.enqueue(new Callback<ApiResponse<PagedResponse<BlockedNumber>>>() {
