@@ -1,0 +1,22 @@
+security:
+  jwt:
+    secret: dGVzdFNlY3JldEtleUZvckJsb2NrRW5kQ2FsbFRlc3RpbmcxMjM0NTY3ODk=
+    expiration: 3600000
+
+spring:
+  cache:
+    type: none
+  jpa:
+    hibernate:
+      ddl-auto: none
+  flyway:
+    enabled: false
+
+server:
+  error:
+    include-message: never
+    include-binding-errors: always
+
+app:
+  report:
+    threshold: 5
