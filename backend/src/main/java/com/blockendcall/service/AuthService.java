@@ -56,18 +56,20 @@ public class AuthService {
     }
 
     public void verifyEmail(String token) {
-        // TODO: implement actual email verification via Spring Mail + token DB lookup
-        log.info("Email verified for token: {}", token);
+        // Not yet implemented. Fail loudly rather than returning 200 to the caller,
+        // which would falsely signal that the email was verified. Never log the token.
+        throw new UnsupportedOperationException("Email verification is not yet available");
     }
 
     public void sendPasswordResetEmail(String email) {
-        // TODO: send actual password reset email via Spring Mail
-        log.info("Password reset email would be sent to: {}", email);
+        // Not yet implemented. Fail loudly rather than silently pretending an email was sent.
+        throw new UnsupportedOperationException("Password reset is not yet available");
     }
 
     public void resetPassword(String token, String newPassword) {
-        // TODO: validate token from DB, update user password
-        log.info("Password reset for token: {}", token);
+        // Not yet implemented. Returning success here would tell the user their password
+        // changed when it did not — a silent failure. Never log the reset token.
+        throw new UnsupportedOperationException("Password reset is not yet available");
     }
 
     private AuthResponse buildAuthResponse(User user, String token) {

@@ -37,7 +37,9 @@ spring:
 server:
   port: 8080
   error:
-    include-message: always
+    # Avoid leaking internal exception detail to clients. Binding (validation) errors
+    # are safe to surface; raw exception messages are not.
+    include-message: on_param
     include-binding-errors: always
 
 security:
