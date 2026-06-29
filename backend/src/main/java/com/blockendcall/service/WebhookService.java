@@ -1,8 +1,9 @@
 package com.blockendcall.service;
 
 import com.blockendcall.dto.response.WebhookResponse;
-import com.blockendcall.entity.BlockedNumber;
 import com.blockendcall.entity.Webhook;
+import com.blockendcall.event.NumberConfirmedEvent;
+import com.blockendcall.exception.ResourceNotFoundException;
 import com.blockendcall.repository.WebhookRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
@@ -35,7 +38,7 @@ public class WebhookService {
     private static final String HMAC_ALGORITHM = "HmacSHA256";
 
     // Private/link-local/loopback prefixes to block at registration time (SSRF prevention).
-    // This is a defense-in-depth check; the @Pattern(https) on the DTO already blocks http.
+    // The @Pattern(https) on CreateWebhookRequest already blocks http; this is defense-in-depth.
     private static final Set<String> PRIVATE_IP_PREFIXES = Set.of(
             "10.", "127.", "0.", "169.254.",
             "192.168.",
@@ -63,14 +66,22 @@ public class WebhookService {
     }
 
     public void deactivate(Long id) {
-        webhookRepository.findById(id).ifPresent(w -> {
-            w.setActive(false);
-            webhookRepository.save(w);
-        });
+        Webhook webhook = webhookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Webhook not found: " + id));
+        webhook.setActive(false);
+        webhookRepository.save(webhook);
     }
 
+    /**
+     * Delivers a NUMBER_CONFIRMED webhook to all active subscribers.
+     *
+     * Runs AFTER the business transaction commits (AFTER_COMMIT phase) so consumers
+     * that call back our API always see the confirmed state in the database.
+     * Runs on the webhook thread pool so delivery latency cannot block the HTTP response.
+     */
     @Async("webhookExecutor")
-    public void notifyConfirmed(BlockedNumber number) {
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void notifyConfirmed(NumberConfirmedEvent event) {
         List<Webhook> active = webhookRepository.findAllByActiveTrue();
         if (active.isEmpty()) {
             return;
@@ -78,16 +89,16 @@ public class WebhookService {
 
         Map<String, Object> payload = Map.of(
                 "event", "NUMBER_CONFIRMED",
-                "phoneNumber", number.getPhoneNumber(),
-                "category", number.getCategory() != null ? number.getCategory().name() : "UNKNOWN",
-                "reportCount", number.getReportCount()
+                "phoneNumber", event.phoneNumber(),
+                "category", event.category(),
+                "reportCount", event.reportCount()
         );
 
         final String body;
         try {
             body = objectMapper.writeValueAsString(payload);
         } catch (JsonProcessingException e) {
-            log.error("Failed to serialize webhook payload for number {}", number.getPhoneNumber(), e);
+            log.error("Failed to serialize webhook payload for number {}", event.phoneNumber(), e);
             return;
         }
 
@@ -136,12 +147,13 @@ public class WebhookService {
             throw new IllegalArgumentException("Webhook URL must include a valid host");
         }
 
-        // Reject bare IPs in private ranges without a DNS lookup.
+        // Reject bare private-IP literals without a DNS lookup.
         if (isPrivateIpLiteral(host)) {
             throw new IllegalArgumentException("Webhook URL must not target private or loopback addresses");
         }
 
-        // Resolve the hostname and check the resulting address.
+        // Resolve the hostname and check the resulting address to catch hostnames
+        // that map to private ranges (e.g. "internal.corp" → 10.0.0.1).
         try {
             InetAddress addr = InetAddress.getByName(host);
             if (addr.isLoopbackAddress() || addr.isLinkLocalAddress()

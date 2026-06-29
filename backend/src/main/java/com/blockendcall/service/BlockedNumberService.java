@@ -7,12 +7,14 @@ import com.blockendcall.dto.response.NumberCheckResponse;
 import com.blockendcall.dto.response.UserReportResponse;
 import com.blockendcall.entity.*;
 import com.blockendcall.enums.SpamCategory;
+import com.blockendcall.event.NumberConfirmedEvent;
 import com.blockendcall.exception.DuplicateReportException;
 import com.blockendcall.exception.ResourceNotFoundException;
 import com.blockendcall.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,7 +43,7 @@ public class BlockedNumberService {
     private final FalsePositiveRepository falsePositiveRepository;
     private final PersonalWhitelistRepository personalWhitelistRepository;
     private final PersonalBlacklistRepository personalBlacklistRepository;
-    private final WebhookService webhookService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${app.report.threshold:5}")
     private int reportThreshold;
@@ -111,7 +113,17 @@ public class BlockedNumberService {
 
         BlockedNumber saved = blockedNumberRepository.save(blockedNumber);
         if (!wasConfirmed && saved.isConfirmed()) {
-            webhookService.notifyConfirmed(saved);
+            // Publish as a Spring event rather than calling WebhookService directly.
+            // WebhookService listens with @TransactionalEventListener(AFTER_COMMIT),
+            // so webhook delivery only happens after this transaction successfully commits.
+            // Primitive data is extracted here, inside the active session, to avoid
+            // any detached-entity access on the async webhook thread.
+            eventPublisher.publishEvent(new NumberConfirmedEvent(
+                    saved.getId(),
+                    saved.getPhoneNumber(),
+                    saved.getCategory() != null ? saved.getCategory().name() : "UNKNOWN",
+                    saved.getReportCount()
+            ));
         }
 
         reportRepository.save(Report.builder()
