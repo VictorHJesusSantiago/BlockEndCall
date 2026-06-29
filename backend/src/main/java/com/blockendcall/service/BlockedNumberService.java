@@ -205,6 +205,12 @@ public class BlockedNumberService {
         blockedNumberRepository.save(number);
     }
 
+    public List<NumberCheckResponse> checkBatch(List<String> phoneNumbers) {
+        return phoneNumbers.stream()
+                .map(this::checkNumber)
+                .collect(Collectors.toList());
+    }
+
     public List<String> autocomplete(String prefix) {
         return blockedNumberRepository.autocomplete(prefix, PageRequest.of(0, 10));
     }
