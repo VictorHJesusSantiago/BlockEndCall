@@ -33,7 +33,6 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- Input section -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -103,7 +102,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Result card (dynamic) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_result"
                 android:layout_width="match_parent"
@@ -118,7 +116,6 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- Emoji + title row -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -161,7 +158,6 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- Score progress bar -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -208,7 +204,6 @@
                         android:background="@color/divider"
                         android:layout_marginBottom="12dp" />
 
-                    <!-- Details -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
