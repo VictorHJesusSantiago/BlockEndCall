@@ -119,7 +119,6 @@ public class SettingsActivity extends AppCompatActivity {
                                    Response<ApiResponse<UserPreference>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     UserPreference serverPrefs = response.body().getData();
-                    // Temporarily remove listeners to avoid triggering pushPreferencesToApi
                     binding.switchBlockedNotifications.setOnCheckedChangeListener(null);
                     binding.switchOnlyConfirmed.setOnCheckedChangeListener(null);
                     binding.switchBlockedNotifications.setChecked(serverPrefs.isNotifyOnConfirm());
@@ -129,7 +128,6 @@ public class SettingsActivity extends AppCompatActivity {
                         binding.sliderSensitivity.setValue(sens);
                         binding.tvSensitivityValue.setText(String.valueOf(sens));
                     }
-                    // Re-attach listeners
                     attachSwitchListeners();
                 }
             }

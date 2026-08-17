@@ -134,7 +134,6 @@ public class ReportedNamesActivity extends AppCompatActivity {
         return true;
     }
 
-    // ── Adapter ───────────────────────────────────────────────────────────────
 
     private static class NamesAdapter extends RecyclerView.Adapter<NamesAdapter.VH> {
 

@@ -105,7 +105,6 @@ public class CheckNumberActivity extends AppCompatActivity {
             binding.tvRiskLevel.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(color)));
         }
 
-        // Score arc color
         binding.progressScore.setProgress(result.isBlocked() ? result.getSpamScore() : 0);
         binding.progressScore.setProgressTintList(ColorStateList.valueOf(
                 Color.parseColor(result.isBlocked() ? getRiskColor(result.getRiskLevel()) : "#2E7D32")));
