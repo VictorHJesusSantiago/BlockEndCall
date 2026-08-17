@@ -40,7 +40,6 @@
                 android:visibility="gone"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Avatar + name header -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,7 +55,6 @@
                     android:padding="24dp"
                     android:gravity="center">
 
-                    <!-- Avatar circle -->
                     <TextView
                         android:id="@+id/tv_avatar"
                         android:layout_width="80dp"
@@ -84,7 +82,6 @@
                         android:layout_marginTop="4dp"
                         android:gravity="center" />
 
-                    <!-- Role badge -->
                     <TextView
                         android:id="@+id/tv_role"
                         android:layout_width="wrap_content"
@@ -99,7 +96,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Stats card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -197,7 +193,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Info card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -236,7 +231,6 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Action buttons -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_edit_profile"
                 android:layout_width="match_parent"
