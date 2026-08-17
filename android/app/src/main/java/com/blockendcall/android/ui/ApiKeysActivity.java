@@ -164,7 +164,6 @@ public class ApiKeysActivity extends AppCompatActivity {
         return true;
     }
 
-    // ── Adapter ───────────────────────────────────────────────────────────────
 
     private class ApiKeysAdapter extends RecyclerView.Adapter<ApiKeysAdapter.VH> {
 

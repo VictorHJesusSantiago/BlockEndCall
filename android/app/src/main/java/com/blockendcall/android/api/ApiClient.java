@@ -18,7 +18,6 @@ public class ApiClient {
     private static Retrofit retrofit;
     private static BlockedNumberApi api;
 
-    // Legacy singleton (used by existing activities)
     public static BlockedNumberApi getApi(SessionManager session) {
         if (api == null) {
             api = buildRetrofit(session).create(BlockedNumberApi.class);
@@ -26,7 +25,6 @@ public class ApiClient {
         return api;
     }
 
-    // Context-based singleton for new activities
     private SessionManager session;
     private static volatile ApiClient INSTANCE;
 
