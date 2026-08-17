@@ -98,7 +98,6 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.message").value("An unexpected error occurred"));
     }
 
-    // Controlador falso que deliberadamente lança exceções para testar o handler
     @RestController
     static class FakeController {
 

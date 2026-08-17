@@ -59,9 +59,6 @@ class RateLimitFilterTest {
         req.addHeader("X-Forwarded-For", "1.2.3.4");
         MockHttpServletResponse res = new MockHttpServletResponse();
 
-        // A primeira requisição usa o remoteAddr real (203.0.113.5), não o XFF (1.2.3.4)
-        // Se o XFF fosse usado, geraria um bucket diferente do remoteAddr.
-        // Verificamos apenas que o filtro passa corretamente sem erros.
         filter.doFilterInternal(req, res, filterChain);
 
         assertThat(res.getStatus()).isNotEqualTo(HttpStatus.TOO_MANY_REQUESTS.value());
@@ -74,13 +71,11 @@ class RateLimitFilterTest {
         String ip = "198.51.100.1";
         String uri = "/api/v1/numbers/check/+5511111111";
 
-        // Executa 60 requisições (limite máximo)
         for (int i = 0; i < 60; i++) {
             MockHttpServletRequest req = buildRequest(uri, ip);
             filter.doFilterInternal(req, new MockHttpServletResponse(), filterChain);
         }
 
-        // A 61ª requisição deve ser bloqueada
         MockHttpServletRequest req61 = buildRequest(uri, ip);
         MockHttpServletResponse res61 = new MockHttpServletResponse();
         filter.doFilterInternal(req61, res61, filterChain);
@@ -95,12 +90,10 @@ class RateLimitFilterTest {
     void differentIps_haveIndependentBuckets() throws Exception {
         String uri = "/api/v1/numbers/check/+5511111111";
 
-        // IP A faz 60 requisições (no limite)
         for (int i = 0; i < 60; i++) {
             filter.doFilterInternal(buildRequest(uri, "10.1.0.1"), new MockHttpServletResponse(), filterChain);
         }
 
-        // IP B faz 1 requisição e não deve ser bloqueado
         MockHttpServletResponse resB = new MockHttpServletResponse();
         filter.doFilterInternal(buildRequest(uri, "10.1.0.2"), resB, filterChain);
 

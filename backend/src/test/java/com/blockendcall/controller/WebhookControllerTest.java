@@ -39,7 +39,6 @@ class WebhookControllerTest {
         return new WebhookResponse(id, "https://hook.example.com", true, LocalDateTime.now());
     }
 
-    // ─── POST / ─────────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("POST / retorna 401 sem autenticação")
@@ -103,7 +102,6 @@ class WebhookControllerTest {
         when(webhookService.register(anyString(), any()))
                 .thenThrow(new IllegalArgumentException("Webhook URL must use HTTPS"));
 
-        // Bypass de validação de @Pattern enviando URL interna (mas com HTTPS)
         mockMvc.perform(post(BASE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"url\":\"https://internal.corp/hook\"}"))
@@ -111,7 +109,6 @@ class WebhookControllerTest {
                 .andExpect(jsonPath("$.message").value("Webhook URL must use HTTPS"));
     }
 
-    // ─── GET / ─────────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("GET / retorna 401 sem autenticação")
@@ -141,7 +138,6 @@ class WebhookControllerTest {
                 .andExpect(jsonPath("$.data[0].active").value(true));
     }
 
-    // ─── DELETE /{id} ──────────────────────────────────────────────────────
 
     @Test
     @DisplayName("DELETE /{id} retorna 401 sem autenticação")

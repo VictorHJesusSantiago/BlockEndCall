@@ -45,8 +45,8 @@ class BlockedNumberSpamScoreTest {
     @DisplayName("getSpamScore subtrai 15 pontos por falso positivo")
     void spamScore_withFalsePositives_appliesPenalty() {
         BlockedNumber number = BlockedNumber.builder()
-                .reportCount(5)   // base = 50
-                .falsePositiveCount(2) // penalty = 30
+                .reportCount(5)
+                .falsePositiveCount(2)
                 .build();
 
         assertThat(number.getSpamScore()).isEqualTo(20);
@@ -56,8 +56,8 @@ class BlockedNumberSpamScoreTest {
     @DisplayName("getSpamScore nunca vai abaixo de zero")
     void spamScore_heavyFalsePositives_doesNotGoBelowZero() {
         BlockedNumber number = BlockedNumber.builder()
-                .reportCount(1)   // base = 10
-                .falsePositiveCount(3) // penalty = 45
+                .reportCount(1)
+                .falsePositiveCount(3)
                 .build();
 
         assertThat(number.getSpamScore()).isZero();
