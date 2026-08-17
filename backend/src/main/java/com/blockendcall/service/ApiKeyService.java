@@ -28,7 +28,6 @@ public class ApiKeyService {
         User user = findUser(email);
         String keyValue = UUID.randomUUID().toString().replace("-", "") +
                           UUID.randomUUID().toString().replace("-", "");
-        // Trim to 64 chars
         keyValue = keyValue.substring(0, 64);
 
         ApiKey apiKey = ApiKey.builder()

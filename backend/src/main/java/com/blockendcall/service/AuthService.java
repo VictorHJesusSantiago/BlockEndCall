@@ -56,19 +56,14 @@ public class AuthService {
     }
 
     public void verifyEmail(String token) {
-        // Not yet implemented. Fail loudly rather than returning 200 to the caller,
-        // which would falsely signal that the email was verified. Never log the token.
         throw new UnsupportedOperationException("Email verification is not yet available");
     }
 
     public void sendPasswordResetEmail(String email) {
-        // Not yet implemented. Fail loudly rather than silently pretending an email was sent.
         throw new UnsupportedOperationException("Password reset is not yet available");
     }
 
     public void resetPassword(String token, String newPassword) {
-        // Not yet implemented. Returning success here would tell the user their password
-        // changed when it did not — a silent failure. Never log the reset token.
         throw new UnsupportedOperationException("Password reset is not yet available");
     }
 

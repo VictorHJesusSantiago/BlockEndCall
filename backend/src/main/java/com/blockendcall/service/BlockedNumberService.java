@@ -113,11 +113,6 @@ public class BlockedNumberService {
 
         BlockedNumber saved = blockedNumberRepository.save(blockedNumber);
         if (!wasConfirmed && saved.isConfirmed()) {
-            // Publish as a Spring event rather than calling WebhookService directly.
-            // WebhookService listens with @TransactionalEventListener(AFTER_COMMIT),
-            // so webhook delivery only happens after this transaction successfully commits.
-            // Primitive data is extracted here, inside the active session, to avoid
-            // any detached-entity access on the async webhook thread.
             eventPublisher.publishEvent(new NumberConfirmedEvent(
                     saved.getId(),
                     saved.getPhoneNumber(),
@@ -154,7 +149,6 @@ public class BlockedNumberService {
 
         number.incrementFalsePositive();
 
-        // Auto-whitelist if false positives exceed half of spam reports
         if (number.getFalsePositiveCount() * 2 >= number.getReportCount()) {
             number.setConfirmed(false);
         }
