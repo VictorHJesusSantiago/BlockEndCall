@@ -38,7 +38,6 @@ class BlockedNumberControllerTest {
 
     private static final String BASE = "/api/v1/numbers";
 
-    // ─── GET /check/{phoneNumber} — endpoint público ───────────────────────────
 
     @Test
     @DisplayName("GET /check/{number} retorna 200 sem autenticação (endpoint público)")
@@ -69,7 +68,6 @@ class BlockedNumberControllerTest {
                 .andExpect(jsonPath("$.data.spamScore").value(80));
     }
 
-    // ─── POST /check-batch — endpoint público ────────────────────────────────
 
     @Test
     @DisplayName("POST /check-batch retorna 200 sem autenticação para lista válida")
@@ -99,7 +97,6 @@ class BlockedNumberControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // ─── GET / — endpoint protegido (auth requerida) ─────────────────────────
 
     @Test
     @DisplayName("GET / retorna 401 sem autenticação")
@@ -120,7 +117,6 @@ class BlockedNumberControllerTest {
                 .andExpect(jsonPath("$.success").value(true));
     }
 
-    // ─── POST /report ─────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("POST /report retorna 401 sem autenticação")
@@ -163,7 +159,6 @@ class BlockedNumberControllerTest {
                 .andExpect(jsonPath("$.success").value(false));
     }
 
-    // ─── POST /{id}/false-positive ────────────────────────────────────────────
 
     @Test
     @WithMockUser
@@ -177,7 +172,6 @@ class BlockedNumberControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // ─── PATCH /{id}/whitelist — requer ROLE_ADMIN ────────────────────────────
 
     @Test
     @DisplayName("PATCH /{id}/whitelist retorna 401 sem autenticação")
@@ -215,7 +209,6 @@ class BlockedNumberControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // ─── DELETE /{id} — requer ROLE_ADMIN ────────────────────────────────────
 
     @Test
     @WithMockUser(roles = "USER")
@@ -235,7 +228,6 @@ class BlockedNumberControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // ─── GET /autocomplete — endpoint público ────────────────────────────────
 
     @Test
     @DisplayName("GET /autocomplete retorna 200 sem autenticação")
@@ -247,7 +239,6 @@ class BlockedNumberControllerTest {
                 .andExpect(jsonPath("$.data[0]").value("+5511"));
     }
 
-    // ─── GET /{id} ────────────────────────────────────────────────────────────
 
     @Test
     @WithMockUser

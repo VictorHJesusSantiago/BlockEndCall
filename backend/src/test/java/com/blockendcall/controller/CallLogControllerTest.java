@@ -35,7 +35,6 @@ class CallLogControllerTest {
 
     private static final String BASE = "/api/v1/users/me/call-log";
 
-    // ─── POST / ───────────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("POST / retorna 401 sem autenticação")
@@ -69,7 +68,6 @@ class CallLogControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // ─── GET / ────────────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("GET / retorna 401 sem autenticação")
@@ -97,7 +95,6 @@ class CallLogControllerTest {
                 .andExpect(jsonPath("$.data.content[0].phoneNumber").value("+5511999990000"));
     }
 
-    // ─── GET /count ───────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("GET /count retorna 401 sem autenticação")

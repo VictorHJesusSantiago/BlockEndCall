@@ -37,7 +37,6 @@ class AuthControllerTest {
                 .build();
     }
 
-    // ─── POST /register ───────────────────────────────────────────────────────
 
     @Test
     @DisplayName("POST /register retorna 201 Created com token quando dados são válidos")
@@ -85,7 +84,6 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.message").value("Email already registered"));
     }
 
-    // ─── POST /login ──────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("POST /login retorna 200 com token quando credenciais são válidas")
@@ -112,7 +110,6 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.message").value("Invalid email or password"));
     }
 
-    // ─── POST /verify-email ───────────────────────────────────────────────────
 
     @Test
     @DisplayName("POST /verify-email retorna 503 (funcionalidade não implementada)")
@@ -125,7 +122,6 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.success").value(false));
     }
 
-    // ─── POST /forgot-password ────────────────────────────────────────────────
 
     @Test
     @DisplayName("POST /forgot-password retorna 503 (funcionalidade não implementada)")
@@ -149,7 +145,6 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.success").value(false));
     }
 
-    // ─── POST /reset-password ─────────────────────────────────────────────────
 
     @Test
     @DisplayName("POST /reset-password retorna 503 (funcionalidade não implementada)")
