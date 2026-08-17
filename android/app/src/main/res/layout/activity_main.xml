@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="@color/surface">
 
-    <!-- Gradient hero -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,7 +65,6 @@
                 android:src="@drawable/ic_shield_off" />
         </LinearLayout>
 
-        <!-- Screening card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -120,10 +118,9 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        </LinearLayout><!-- /inner padding wrapper -->
-    </LinearLayout><!-- /hero -->
+        </LinearLayout>
+    </LinearLayout>
 
-    <!-- Scrollable content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -138,7 +135,6 @@
             android:paddingTop="20dp"
             android:paddingBottom="24dp">
 
-            <!-- Quick actions 2x2 grid -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -265,7 +261,6 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-            <!-- Main action buttons -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_view_blocked"
                 android:layout_width="match_parent"
