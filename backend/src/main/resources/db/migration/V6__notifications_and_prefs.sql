@@ -1,4 +1,3 @@
--- Announcements from admins
 CREATE TABLE IF NOT EXISTS announcements (
     id          BIGSERIAL PRIMARY KEY,
     title       VARCHAR(200) NOT NULL,
@@ -8,7 +7,6 @@ CREATE TABLE IF NOT EXISTS announcements (
     created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- User preferences (server-side, for cross-device sync)
 CREATE TABLE IF NOT EXISTS user_preferences (
     id                      BIGSERIAL PRIMARY KEY,
     user_id                 BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE UNIQUE,
@@ -24,7 +22,6 @@ CREATE TABLE IF NOT EXISTS user_preferences (
     updated_at              TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- FCM tokens for push notifications
 CREATE TABLE IF NOT EXISTS fcm_tokens (
     id          BIGSERIAL PRIMARY KEY,
     user_id     BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

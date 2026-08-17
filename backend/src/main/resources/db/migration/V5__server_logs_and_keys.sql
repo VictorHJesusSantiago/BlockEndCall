@@ -1,4 +1,3 @@
--- Server-side blocked call log
 CREATE TABLE IF NOT EXISTS server_blocked_call_log (
     id              BIGSERIAL PRIMARY KEY,
     user_id         BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -8,7 +7,6 @@ CREATE TABLE IF NOT EXISTS server_blocked_call_log (
     matched_number_id BIGINT REFERENCES blocked_numbers(id) ON DELETE SET NULL
 );
 
--- API keys for third-party consumers
 CREATE TABLE IF NOT EXISTS user_api_keys (
     id          BIGSERIAL PRIMARY KEY,
     user_id     BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -19,7 +17,6 @@ CREATE TABLE IF NOT EXISTS user_api_keys (
     last_used_at TIMESTAMP
 );
 
--- User badges
 CREATE TABLE IF NOT EXISTS user_badges (
     id          BIGSERIAL PRIMARY KEY,
     user_id     BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -28,7 +25,6 @@ CREATE TABLE IF NOT EXISTS user_badges (
     UNIQUE (user_id, badge_type)
 );
 
--- Audit log
 CREATE TABLE IF NOT EXISTS audit_log (
     id          BIGSERIAL PRIMARY KEY,
     actor_id    BIGINT REFERENCES users(id) ON DELETE SET NULL,

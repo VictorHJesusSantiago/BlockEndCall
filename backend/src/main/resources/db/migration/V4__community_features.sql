@@ -1,4 +1,3 @@
--- "Me too" confirmations (users who also received spam from this number)
 CREATE TABLE IF NOT EXISTS report_confirmations (
     id                  BIGSERIAL PRIMARY KEY,
     user_id             BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -7,7 +6,6 @@ CREATE TABLE IF NOT EXISTS report_confirmations (
     UNIQUE (user_id, blocked_number_id)
 );
 
--- Personal whitelist per user
 CREATE TABLE IF NOT EXISTS user_personal_whitelist (
     id          BIGSERIAL PRIMARY KEY,
     user_id     BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -17,7 +15,6 @@ CREATE TABLE IF NOT EXISTS user_personal_whitelist (
     UNIQUE (user_id, phone_number)
 );
 
--- Personal blacklist per user
 CREATE TABLE IF NOT EXISTS user_personal_blacklist (
     id          BIGSERIAL PRIMARY KEY,
     user_id     BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

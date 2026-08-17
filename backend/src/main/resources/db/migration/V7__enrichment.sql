@@ -1,4 +1,3 @@
--- Names callers claim to be (user-submitted)
 CREATE TABLE IF NOT EXISTS number_reported_names (
     id                  BIGSERIAL PRIMARY KEY,
     blocked_number_id   BIGINT NOT NULL REFERENCES blocked_numbers(id) ON DELETE CASCADE,
@@ -8,7 +7,6 @@ CREATE TABLE IF NOT EXISTS number_reported_names (
     UNIQUE (blocked_number_id, reported_name)
 );
 
--- Public whitelist of known legitimate numbers
 CREATE TABLE IF NOT EXISTS public_whitelist (
     id              BIGSERIAL PRIMARY KEY,
     phone_number    VARCHAR(30) NOT NULL UNIQUE,
@@ -19,7 +17,6 @@ CREATE TABLE IF NOT EXISTS public_whitelist (
     created_at      TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- Number activity timeline events
 CREATE TABLE IF NOT EXISTS number_timeline_events (
     id                  BIGSERIAL PRIMARY KEY,
     blocked_number_id   BIGINT NOT NULL REFERENCES blocked_numbers(id) ON DELETE CASCADE,
