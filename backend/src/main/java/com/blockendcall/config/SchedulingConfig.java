@@ -21,7 +21,6 @@ public class SchedulingConfig {
         executor.setMaxPoolSize(5);
         executor.setQueueCapacity(100);
         executor.setThreadNamePrefix("webhook-");
-        // If the queue is full, the calling thread runs the task so no delivery is lost.
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.initialize();
         return executor;

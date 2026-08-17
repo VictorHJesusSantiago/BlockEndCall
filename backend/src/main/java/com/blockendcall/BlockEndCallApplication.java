@@ -14,7 +14,6 @@ import java.util.Arrays;
 @EnableCaching
 public class BlockEndCallApplication {
 
-    // The default secret committed to source control — publicly known, must never be used in prod.
     private static final String DEFAULT_JWT_PREFIX = "404E6352";
 
     public static void main(String[] args) {
