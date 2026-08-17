@@ -37,7 +37,6 @@ public class FcmService {
 
     public void sendNotification(Long userId, String title, String body) {
         List<FcmToken> tokens = fcmTokenRepository.findByUserId(userId);
-        // Stub implementation — in production, would call Firebase Admin SDK
         log.info("Sending notification to user {} ({} devices): {} - {}",
                 userId, tokens.size(), title, body);
     }

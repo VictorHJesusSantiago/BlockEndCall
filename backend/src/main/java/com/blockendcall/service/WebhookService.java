@@ -37,8 +37,6 @@ public class WebhookService {
 
     private static final String HMAC_ALGORITHM = "HmacSHA256";
 
-    // Private/link-local/loopback prefixes to block at registration time (SSRF prevention).
-    // The @Pattern(https) on CreateWebhookRequest already blocks http; this is defense-in-depth.
     private static final Set<String> PRIVATE_IP_PREFIXES = Set.of(
             "10.", "127.", "0.", "169.254.",
             "192.168.",
@@ -107,7 +105,6 @@ public class WebhookService {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 if (webhook.getSecret() != null) {
-                    // Sign the exact bytes transmitted so the receiver can verify integrity.
                     headers.set("X-BlockEndCall-Signature", "sha256=" + sign(webhook.getSecret(), body));
                 }
                 HttpEntity<String> entity = new HttpEntity<>(body, headers);
@@ -125,7 +122,6 @@ public class WebhookService {
             byte[] hmac = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().formatHex(hmac);
         } catch (Exception e) {
-            // Never emit an empty or forgeable signature — fail the delivery instead.
             throw new IllegalStateException("Unable to compute webhook signature", e);
         }
     }
@@ -147,13 +143,10 @@ public class WebhookService {
             throw new IllegalArgumentException("Webhook URL must include a valid host");
         }
 
-        // Reject bare private-IP literals without a DNS lookup.
         if (isPrivateIpLiteral(host)) {
             throw new IllegalArgumentException("Webhook URL must not target private or loopback addresses");
         }
 
-        // Resolve the hostname and check the resulting address to catch hostnames
-        // that map to private ranges (e.g. "internal.corp" → 10.0.0.1).
         try {
             InetAddress addr = InetAddress.getByName(host);
             if (addr.isLoopbackAddress() || addr.isLinkLocalAddress()

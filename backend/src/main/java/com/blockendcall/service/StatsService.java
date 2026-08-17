@@ -106,7 +106,6 @@ public class StatsService {
 
         Map<String, Long> byDdd = getStatsByDdd();
 
-        // Real daily counts — last 30 days
         List<Object[]> dayRows = reportRepository.countByDay(
                 LocalDateTime.now().minusDays(29).truncatedTo(ChronoUnit.DAYS));
         Map<String, Long> dayMap = new HashMap<>();
@@ -131,7 +130,6 @@ public class StatsService {
                     .build());
         }
 
-        // Real peak hours (0-23)
         List<Object[]> hourRows = reportRepository.countByHour();
         Map<Integer, Long> peakHours = new LinkedHashMap<>();
         Map<Integer, Long> hourMap = new HashMap<>();
@@ -145,7 +143,6 @@ public class StatsService {
         long totalReports = base.getTotalReports();
         long totalConfirmed = base.getTotalConfirmed();
 
-        // Real false positive rate using actual falsePositiveCount data
         long totalFalsePositives = blockedNumberRepository.findAll().stream()
                 .mapToLong(BlockedNumber::getFalsePositiveCount).sum();
         double falsePositiveRate = totalReports > 0
