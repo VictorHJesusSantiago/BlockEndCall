@@ -57,7 +57,6 @@ class BlockedNumberServiceTest {
                 .role(UserRole.USER).build();
     }
 
-    // ─── checkNumber ─────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("checkNumber retorna resposta segura quando número não existe na base")
@@ -119,7 +118,6 @@ class BlockedNumberServiceTest {
         assertThat(result.isConfirmed()).isFalse();
     }
 
-    // ─── reportNumber ────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("reportNumber cria novo BlockedNumber quando número ainda não existe")
@@ -237,7 +235,6 @@ class BlockedNumberServiceTest {
         verify(eventPublisher, never()).publishEvent(any());
     }
 
-    // ─── reportFalsePositive ─────────────────────────────────────────────────
 
     @Test
     @DisplayName("reportFalsePositive desconfirma número quando FP * 2 >= reportCount")
@@ -273,7 +270,6 @@ class BlockedNumberServiceTest {
                 .isInstanceOf(DuplicateReportException.class);
     }
 
-    // ─── adminWhitelist / deleteNumber ───────────────────────────────────────
 
     @Test
     @DisplayName("adminWhitelist lança ResourceNotFoundException quando número não existe")
@@ -313,7 +309,6 @@ class BlockedNumberServiceTest {
         verify(blockedNumberRepository).deleteById(1L);
     }
 
-    // ─── getMyReports ─────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("getMyReports lança UsernameNotFoundException quando email não existe")
@@ -335,7 +330,6 @@ class BlockedNumberServiceTest {
         assertThat(reports).isEmpty();
     }
 
-    // ─── listConfirmedNumbers ─────────────────────────────────────────────────
 
     @Test
     @DisplayName("listConfirmedNumbers delega ao repositório e mapeia para DTO")

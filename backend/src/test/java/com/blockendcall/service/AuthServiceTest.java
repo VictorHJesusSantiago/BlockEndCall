@@ -35,7 +35,6 @@ class AuthServiceTest {
 
     @InjectMocks private AuthService authService;
 
-    // ─── register ───────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("register cria usuário e retorna token quando email é inédito")
@@ -107,7 +106,6 @@ class AuthServiceTest {
         verify(userRepository).save(argThat(u -> u.getPassword().equals("$bcrypt$hash")));
     }
 
-    // ─── login ──────────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("login retorna AuthResponse quando credenciais estão corretas")
@@ -147,7 +145,6 @@ class AuthServiceTest {
                 .isInstanceOf(BadCredentialsException.class);
     }
 
-    // ─── stubs de funcionalidades não implementadas ─────────────────────────
 
     @Test
     @DisplayName("verifyEmail lança UnsupportedOperationException (não implementado)")

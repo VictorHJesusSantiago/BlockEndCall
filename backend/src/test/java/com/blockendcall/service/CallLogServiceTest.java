@@ -50,7 +50,6 @@ class CallLogServiceTest {
                 .role(UserRole.USER).build();
     }
 
-    // ─── logBlockedCall ──────────────────────────────────────────────────────
 
     @Test
     @DisplayName("logBlockedCall salva o log com resultado REJECTED por padrão")
@@ -134,7 +133,6 @@ class CallLogServiceTest {
                 .isInstanceOf(UsernameNotFoundException.class);
     }
 
-    // ─── getMyCallLog ────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("getMyCallLog retorna página de logs do usuário autenticado")
@@ -157,7 +155,6 @@ class CallLogServiceTest {
         assertThat(result.getContent().get(0).getPhoneNumber()).isEqualTo("+5511999990000");
     }
 
-    // ─── getMyBlockedCallCount ───────────────────────────────────────────────
 
     @Test
     @DisplayName("getMyBlockedCallCount retorna a contagem total do repositório")

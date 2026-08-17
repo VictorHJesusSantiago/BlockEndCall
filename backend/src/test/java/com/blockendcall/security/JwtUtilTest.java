@@ -19,10 +19,9 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("JwtUtil — geração e validação de tokens JWT")
 class JwtUtilTest {
 
-    // Chave Base64 válida de 32 bytes para HmacSHA256
     private static final String TEST_SECRET =
             "dGVzdFNlY3JldEtleUZvckJsb2NrRW5kQ2FsbFRlc3RpbmcxMjM0NTY3ODk=";
-    private static final long EXPIRATION_MS = 3_600_000L; // 1h
+    private static final long EXPIRATION_MS = 3_600_000L;
 
     private JwtUtil jwtUtil;
     private User testUser;
@@ -94,14 +93,11 @@ class JwtUtilTest {
     @Test
     @DisplayName("isTokenValid lança JwtException para token expirado (jjwt rejeita na parse)")
     void isTokenValid_expiredToken_throwsJwtException() {
-        // Gera um token com expiração de -1ms (já expirado na criação)
         ReflectionTestUtils.setField(jwtUtil, "expiration", -1L);
         String expiredToken = jwtUtil.generateToken(testUser);
 
-        // Restaura expiração normal
         ReflectionTestUtils.setField(jwtUtil, "expiration", EXPIRATION_MS);
 
-        // jjwt 0.12 lança ExpiredJwtException ao fazer parse de token expirado
         assertThatThrownBy(() -> jwtUtil.isTokenValid(expiredToken, testUser))
                 .isInstanceOf(JwtException.class);
     }
@@ -113,7 +109,6 @@ class JwtUtilTest {
 
         String token = jwtUtil.generateToken(claims, testUser);
 
-        // O token deve ser válido para o mesmo usuário
         assertThat(jwtUtil.isTokenValid(token, testUser)).isTrue();
         assertThat(jwtUtil.extractUsername(token)).isEqualTo("victor@example.com");
     }
@@ -122,7 +117,7 @@ class JwtUtilTest {
     @DisplayName("dois tokens gerados para o mesmo usuário são diferentes (timestamps únicos)")
     void generateToken_calledTwice_producesDifferentTokens() throws InterruptedException {
         String token1 = jwtUtil.generateToken(testUser);
-        Thread.sleep(10); // garante timestamps distintos
+        Thread.sleep(10);
         String token2 = jwtUtil.generateToken(testUser);
 
         assertThat(token1).isNotEqualTo(token2);

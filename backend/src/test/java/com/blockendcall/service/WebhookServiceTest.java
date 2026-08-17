@@ -40,7 +40,6 @@ class WebhookServiceTest {
         webhookService = new WebhookService(webhookRepository, restTemplate, new ObjectMapper());
     }
 
-    // ─── register — validação de SSRF ────────────────────────────────────────
 
     @Test
     @DisplayName("register rejeita URL com esquema HTTP (somente HTTPS é permitido)")
@@ -93,7 +92,6 @@ class WebhookServiceTest {
     @Test
     @DisplayName("register rejeita hostname inválido que não pode ser resolvido por DNS")
     void register_unresolvableHost_throwsIllegalArgument() {
-        // .invalid é um TLD reservado que nunca resolve (RFC 2606)
         assertThatThrownBy(() -> webhookService.register("https://naoexiste.invalid/hook", null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("cannot be resolved");
@@ -123,11 +121,9 @@ class WebhookServiceTest {
             assertThat(response.id()).isEqualTo(1L);
             assertThat(response.url()).isEqualTo("https://hook.example.com/callback");
             assertThat(response.active()).isTrue();
-            // WebhookResponse é um record sem campo 'secret' — confirmado pela ausência de getter
         }
     }
 
-    // ─── listAll ─────────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("listAll retorna lista mapeada para WebhookResponse")
@@ -146,7 +142,6 @@ class WebhookServiceTest {
                 .containsExactly("https://a.example.com", "https://b.example.com");
     }
 
-    // ─── deactivate ──────────────────────────────────────────────────────────
 
     @Test
     @DisplayName("deactivate seta active=false e salva o webhook")
@@ -170,7 +165,6 @@ class WebhookServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ─── notifyConfirmed ─────────────────────────────────────────────────────
 
     @Test
     @DisplayName("notifyConfirmed não faz requisições quando não há webhooks ativos")
@@ -216,7 +210,6 @@ class WebhookServiceTest {
         HttpEntity<String> entity = captor.getValue();
         String sig = entity.getHeaders().getFirst("X-BlockEndCall-Signature");
         assertThat(sig).isNotNull().startsWith("sha256=");
-        // Garante que a assinatura usa HMAC (64 hex chars) e não é vazia
         assertThat(sig.substring("sha256=".length())).hasSize(64);
     }
 
@@ -258,7 +251,6 @@ class WebhookServiceTest {
     @Test
     @DisplayName("sign produz assinaturas HMAC-SHA256 determinísticas (mesmos inputs = mesmo output)")
     void sign_deterministic_sameInputsSameOutput() throws Exception {
-        // Acessa sign() indiretamente via notifyConfirmed com mesmo payload
         Webhook w = Webhook.builder().id(1L).url("https://a.example.com/hook")
                 .secret("secret-fixo").active(true).build();
 
@@ -273,7 +265,6 @@ class WebhookServiceTest {
         verify(restTemplate, times(2)).postForEntity(any(), captor.capture(), eq(String.class));
         List<HttpEntity<String>> entities = captor.getAllValues();
 
-        // Ambas as entregas tiveram o mesmo payload → mesma assinatura
         String sig1 = entities.get(0).getHeaders().getFirst("X-BlockEndCall-Signature");
         String sig2 = entities.get(1).getHeaders().getFirst("X-BlockEndCall-Signature");
         assertThat(sig1).isEqualTo(sig2);
