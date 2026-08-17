@@ -37,7 +37,7 @@ public class BlockedListActivity extends AppCompatActivity {
     private boolean isLoading = false;
     private String activeCategory = null;
     private String activeSearch = null;
-    private String activePeriod = null; // "WEEK", "MONTH", or null
+    private String activePeriod = null;
     private String activeSort = "reportCount,desc";
     private String activeDdd = null;
 
@@ -74,7 +74,6 @@ public class BlockedListActivity extends AppCompatActivity {
         binding.fabReport.setOnClickListener(v ->
                 startActivity(new Intent(this, ReportNumberActivity.class)));
 
-        // Search with 400ms debounce
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
             @Override public void onTextChanged(CharSequence s, int st, int b, int c) {}
@@ -88,7 +87,6 @@ public class BlockedListActivity extends AppCompatActivity {
             }
         });
 
-        // Category chip filter
         binding.chipGroupFilter.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) return;
             int id = checkedIds.get(0);
@@ -102,7 +100,6 @@ public class BlockedListActivity extends AppCompatActivity {
             resetAndLoad();
         });
 
-        // Period chips
         binding.chipGroupPeriod.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) return;
             int id = checkedIds.get(0);
@@ -112,7 +109,6 @@ public class BlockedListActivity extends AppCompatActivity {
             resetAndLoad();
         });
 
-        // Sort spinner
         String[] sortOptions = {"Mais reportados", "Mais recentes", "Por score"};
         String[] sortValues = {"reportCount,desc", "createdAt,desc", "spamScore,desc"};
         android.widget.ArrayAdapter<String> sortAdapter = new android.widget.ArrayAdapter<>(
@@ -132,7 +128,6 @@ public class BlockedListActivity extends AppCompatActivity {
             public void onNothingSelected(android.widget.AdapterView<?> parent) {}
         });
 
-        // DDD filter
         binding.etDddFilter.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}

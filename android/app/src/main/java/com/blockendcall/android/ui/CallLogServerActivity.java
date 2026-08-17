@@ -85,7 +85,6 @@ public class CallLogServerActivity extends AppCompatActivity {
         return true;
     }
 
-    // ── Adapter ───────────────────────────────────────────────────────────────
 
     private static class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.VH> {
 

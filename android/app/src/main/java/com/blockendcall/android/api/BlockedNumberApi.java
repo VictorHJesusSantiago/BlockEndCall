@@ -28,18 +28,15 @@ import retrofit2.http.*;
 
 public interface BlockedNumberApi {
 
-    // ── Auth ──────────────────────────────────────────────────────────────────
     @POST("api/v1/auth/register")
     Call<ApiResponse<AuthResponse>> register(@Body Map<String, String> body);
 
     @POST("api/v1/auth/login")
     Call<ApiResponse<AuthResponse>> login(@Body Map<String, String> body);
 
-    // ── Number check (public) ────────────────────────────────────────────────
     @GET("api/v1/numbers/check/{phoneNumber}")
     Call<ApiResponse<NumberCheckResult>> checkNumber(@Path("phoneNumber") String phoneNumber);
 
-    // ── Blocked numbers ──────────────────────────────────────────────────────
     @GET("api/v1/numbers")
     Call<ApiResponse<PagedResponse<BlockedNumber>>> listNumbers(
             @Query("page") int page, @Query("size") int size, @Query("sort") String sort);
@@ -67,11 +64,9 @@ public interface BlockedNumberApi {
     @POST("api/v1/numbers/check-batch")
     Call<ApiResponse<List<NumberCheckResult>>> checkBatch(@Body Map<String, List<String>> body);
 
-    // ── Me too ───────────────────────────────────────────────────────────────
     @POST("api/v1/numbers/{id}/confirm")
     Call<ApiResponse<Void>> meToo(@Path("id") long numberId);
 
-    // ── Number enrichment ────────────────────────────────────────────────────
     @GET("api/v1/numbers/{id}/reported-names")
     Call<ApiResponse<List<NumberReportedName>>> getReportedNames(@Path("id") long id);
 
@@ -81,7 +76,6 @@ public interface BlockedNumberApi {
     @GET("api/v1/numbers/{id}/timeline")
     Call<ApiResponse<List<NumberTimeline>>> getTimeline(@Path("id") long id);
 
-    // ── Stats (public) ───────────────────────────────────────────────────────
     @GET("api/v1/stats")
     Call<ApiResponse<Stats>> getStats();
 
@@ -91,7 +85,6 @@ public interface BlockedNumberApi {
     @GET("api/v1/stats/leaderboard")
     Call<ApiResponse<List<LeaderboardEntry>>> getLeaderboard(@Query("limit") int limit);
 
-    // ── User profile ─────────────────────────────────────────────────────────
     @GET("api/v1/users/me")
     Call<ApiResponse<UserProfile>> getMyProfile();
 
@@ -113,7 +106,6 @@ public interface BlockedNumberApi {
     @POST("api/v1/users/me/terms")
     Call<ApiResponse<Void>> acceptTerms();
 
-    // ── Personal whitelist ───────────────────────────────────────────────────
     @GET("api/v1/users/me/personal-whitelist")
     Call<ApiResponse<List<PersonalListEntry>>> getPersonalWhitelist();
 
@@ -123,7 +115,6 @@ public interface BlockedNumberApi {
     @DELETE("api/v1/users/me/personal-whitelist/{phone}")
     Call<ApiResponse<Void>> removeFromWhitelist(@Path("phone") String phone);
 
-    // ── Personal blacklist ───────────────────────────────────────────────────
     @GET("api/v1/users/me/personal-blacklist")
     Call<ApiResponse<List<PersonalListEntry>>> getPersonalBlacklist();
 
@@ -133,23 +124,19 @@ public interface BlockedNumberApi {
     @DELETE("api/v1/users/me/personal-blacklist/{phone}")
     Call<ApiResponse<Void>> removeFromBlacklist(@Path("phone") String phone);
 
-    // ── Call log ─────────────────────────────────────────────────────────────
     @GET("api/v1/users/me/call-log")
     Call<ApiResponse<PagedResponse<BlockedCallLogEntry>>> getCallLog(
             @Query("page") int page, @Query("size") int size);
 
-    // ── User preferences ─────────────────────────────────────────────────────
     @GET("api/v1/users/me/preferences")
     Call<ApiResponse<UserPreference>> getPreferences();
 
     @PUT("api/v1/users/me/preferences")
     Call<ApiResponse<UserPreference>> updatePreferences(@Body Map<String, Object> body);
 
-    // ── Badges ───────────────────────────────────────────────────────────────
     @GET("api/v1/users/me/badges")
     Call<ApiResponse<List<Badge>>> getBadges();
 
-    // ── API Keys ─────────────────────────────────────────────────────────────
     @GET("api/v1/users/me/api-keys")
     Call<ApiResponse<List<ApiKeyModel>>> getApiKeys();
 
@@ -159,19 +146,15 @@ public interface BlockedNumberApi {
     @DELETE("api/v1/users/me/api-keys/{keyId}")
     Call<ApiResponse<Void>> revokeApiKey(@Path("keyId") long keyId);
 
-    // ── FCM ──────────────────────────────────────────────────────────────────
     @POST("api/v1/users/me/fcm")
     Call<ApiResponse<Void>> registerFcmToken(@Body Map<String, String> body);
 
-    // ── Announcements (public) ───────────────────────────────────────────────
     @GET("api/v1/announcements")
     Call<ApiResponse<List<Announcement>>> getAnnouncements();
 
-    // ── Public whitelist ─────────────────────────────────────────────────────
     @GET("api/v1/public-whitelist/check/{phone}")
     Call<ApiResponse<PublicWhitelistEntry>> checkPublicWhitelist(@Path("phone") String phone);
 
-    // ── Admin ─────────────────────────────────────────────────────────────────
     @GET("api/v1/admin/users")
     Call<ApiResponse<PagedResponse<AdminUser>>> adminListUsers(
             @Query("page") int page, @Query("size") int size);
