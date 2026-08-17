@@ -10,7 +10,6 @@ import java.util.Map;
 @Builder
 public class EnhancedStatsResponse {
 
-    // Base stats
     private long totalConfirmed;
     private long totalPending;
     private long totalReports;
@@ -19,7 +18,6 @@ public class EnhancedStatsResponse {
     private List<BlockedNumberResponse> trending;
     private List<BlockedNumberResponse> recentlyAdded;
 
-    // Enhanced stats
     private Map<String, Long> byDdd;
     private List<DailyCount> dailyCounts;
     private Map<Integer, Long> peakHours;

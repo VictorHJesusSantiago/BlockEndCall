@@ -24,7 +24,6 @@ public class PersonalListController {
 
     private final PersonalListService personalListService;
 
-    // ── Whitelist ──────────────────────────────────────────────────────────────
 
     @GetMapping("/api/v1/users/me/personal-whitelist")
     @Operation(summary = "Get my personal whitelist", security = @SecurityRequirement(name = "bearerAuth"))
@@ -52,7 +51,6 @@ public class PersonalListController {
         return ResponseEntity.ok(ApiResponse.ok(null));
     }
 
-    // ── Blacklist ──────────────────────────────────────────────────────────────
 
     @GetMapping("/api/v1/users/me/personal-blacklist")
     @Operation(summary = "Get my personal blacklist", security = @SecurityRequirement(name = "bearerAuth"))

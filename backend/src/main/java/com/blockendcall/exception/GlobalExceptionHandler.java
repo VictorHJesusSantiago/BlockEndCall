@@ -55,15 +55,12 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Access denied"));
     }
 
-    // Auth stubs (email verification, password reset) throw this until the feature is implemented.
-    // Mapped to 503 so clients know to retry later, not 500 which implies a bug.
     @ExceptionHandler(UnsupportedOperationException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotImplemented(UnsupportedOperationException ex) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(ApiResponse.error("This feature is not yet available"));
     }
 
-    // Validation errors from service-layer guards (e.g. webhook SSRF check, duplicate email).
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
