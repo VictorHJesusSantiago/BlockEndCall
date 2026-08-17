@@ -48,7 +48,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- CallScreeningService: intercepts incoming calls and checks against backend -->
         <service
             android:name=".service.BlockCallScreeningService"
             android:exported="true"
