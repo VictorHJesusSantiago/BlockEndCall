@@ -17,7 +17,6 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- Category emoji circle -->
         <TextView
             android:id="@+id/tv_category_emoji"
             android:layout_width="44dp"
