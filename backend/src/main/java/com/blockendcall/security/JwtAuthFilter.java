@@ -55,8 +55,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             }
         } catch (JwtException ex) {
-            // Malformed/expired/invalid signature: leave the context unauthenticated.
-            // The security entry point then responds 401 instead of a 500 leaking a stacktrace.
             SecurityContextHolder.clearContext();
         }
 

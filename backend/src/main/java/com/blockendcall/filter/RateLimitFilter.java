@@ -21,8 +21,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private static final int MAX_REQUESTS = 60;
     private static final long WINDOW_MS = 60_000L;
 
-    // Bound the map so a flood of unique source IPs cannot exhaust heap.
-    // When exceeded, entries whose entire window has elapsed are evicted first.
     private static final int MAX_TRACKED_IPS = 10_000;
 
     private final ConcurrentHashMap<String, Deque<Long>> requestLog = new ConcurrentHashMap<>();
@@ -36,12 +34,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
                 || uri.equals("/api/v1/numbers/check-batch");
 
         if (rateLimitApplies) {
-            // Use the TCP-level remote address only.
-            // X-Forwarded-For is deliberately ignored here: a client can supply any value,
-            // allowing it to create unlimited fresh buckets and bypass this limiter.
-            // To support a trusted reverse proxy, configure Spring's ForwardedHeaderFilter
-            // (server.forward-headers-strategy=framework in application.yml) and the
-            // proxy's outbound XFF policy; then revisit this decision.
             String ip = req.getRemoteAddr();
             long now = Instant.now().toEpochMilli();
 
@@ -67,8 +59,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
         chain.doFilter(req, res);
     }
 
-    // Evict fully-expired entries when the map grows too large.
-    // An entry is expired when even its most-recent timestamp is outside the window.
     private void evictIfNecessary(long now) {
         if (requestLog.size() >= MAX_TRACKED_IPS) {
             requestLog.entrySet().removeIf(e -> {
