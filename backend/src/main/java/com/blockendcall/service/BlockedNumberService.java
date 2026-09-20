@@ -1,9 +1,12 @@
 package com.blockendcall.service;
 
 import com.blockendcall.dto.request.ReportNumberRequest;
+import com.blockendcall.dto.request.ChangePasswordRequest;
+import com.blockendcall.dto.request.UpdateProfileRequest;
 import com.blockendcall.dto.request.WhitelistRequest;
 import com.blockendcall.dto.response.BlockedNumberResponse;
 import com.blockendcall.dto.response.NumberCheckResponse;
+import com.blockendcall.dto.response.UserProfileResponse;
 import com.blockendcall.dto.response.UserReportResponse;
 import com.blockendcall.entity.*;
 import com.blockendcall.enums.SpamCategory;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,6 +48,7 @@ public class BlockedNumberService {
     private final PersonalWhitelistRepository personalWhitelistRepository;
     private final PersonalBlacklistRepository personalBlacklistRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.report.threshold:5}")
     private int reportThreshold;
@@ -83,6 +88,62 @@ public class BlockedNumberService {
         return reportRepository.findAllByUserId(user.getId()).stream()
                 .map(UserReportResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    public UserProfileResponse getUserProfile(String userEmail) {
+        User user = findUser(userEmail);
+        return UserProfileResponse.from(user, reportRepository.countByUserId(user.getId()));
+    }
+
+    @Transactional
+    public UserProfileResponse updateProfile(UpdateProfileRequest request, String userEmail) {
+        User user = findUser(userEmail);
+        user.setName(request.getName());
+        user.setPhone(request.getPhone());
+        User saved = userRepository.save(user);
+        return UserProfileResponse.from(saved, reportRepository.countByUserId(saved.getId()));
+    }
+
+    @Transactional
+    public void changePassword(ChangePasswordRequest request, String userEmail) {
+        User user = findUser(userEmail);
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Current password is invalid");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    @Transactional
+    @CacheEvict(value = {"number-check", "global-stats"}, allEntries = true)
+    public void unreportNumber(Long reportId, String userEmail) {
+        User user = findUser(userEmail);
+        Report report = reportRepository.findById(reportId)
+                .filter(r -> r.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new ResourceNotFoundException("Report not found: " + reportId));
+
+        BlockedNumber number = report.getBlockedNumber();
+        reportRepository.delete(report);
+        number.setReportCount(Math.max(0, number.getReportCount() - 1));
+        if (number.getReportCount() < reportThreshold) {
+            number.setConfirmed(false);
+        }
+        blockedNumberRepository.save(number);
+    }
+
+    @Transactional
+    public void deleteAccount(String password, String userEmail) {
+        User user = findUser(userEmail);
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("Password is invalid");
+        }
+        user.setActive(false);
+        user.setSuspended(true);
+        user.setName("Deleted user");
+        user.setPhone(null);
+        user.setEmail("deleted-" + user.getId() + "@blockendcall.local");
+        user.setPassword(passwordEncoder.encode("deleted-" + user.getId() + "-" + System.nanoTime()));
+        userRepository.save(user);
     }
 
     @Transactional
@@ -233,10 +294,11 @@ public class BlockedNumberService {
                 if (parts.length > 1) {
                     try { cat = SpamCategory.valueOf(parts[1].trim().toUpperCase()); } catch (Exception ignored) {}
                 }
+                SpamCategory category = cat;
                 try {
                     BlockedNumber bn = blockedNumberRepository.findByPhoneNumber(phone)
                             .orElseGet(() -> BlockedNumber.builder()
-                                    .phoneNumber(phone).category(cat).reportCount(0).build());
+                                    .phoneNumber(phone).category(category).reportCount(0).build());
                     bn.setConfirmed(true);
                     if (bn.getReportCount() < reportThreshold) bn.setReportCount(reportThreshold);
                     blockedNumberRepository.save(bn);
