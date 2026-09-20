@@ -1,6 +1,7 @@
 package com.blockendcall.controller;
 
 import com.blockendcall.dto.response.AuthResponse;
+import com.blockendcall.config.SecurityConfig;
 import com.blockendcall.enums.UserRole;
 import com.blockendcall.service.AuthService;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
+@Import(SecurityConfig.class)
 @DisplayName("AuthController — endpoints de autenticação e registro")
 class AuthControllerTest {
 
