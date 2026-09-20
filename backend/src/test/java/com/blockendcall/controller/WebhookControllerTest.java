@@ -1,5 +1,6 @@
 package com.blockendcall.controller;
 
+import com.blockendcall.config.SecurityConfig;
 import com.blockendcall.dto.response.WebhookResponse;
 import com.blockendcall.exception.ResourceNotFoundException;
 import com.blockendcall.service.WebhookService;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -24,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(WebhookController.class)
+@Import(SecurityConfig.class)
 @DisplayName("WebhookController — gerenciamento de webhooks (requer ADMIN)")
 class WebhookControllerTest {
 

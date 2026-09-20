@@ -205,7 +205,7 @@ class WebhookServiceTest {
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<HttpEntity<String>> captor = ArgumentCaptor.forClass(HttpEntity.class);
-        verify(restTemplate).postForEntity(any(), captor.capture(), eq(String.class));
+        verify(restTemplate).postForEntity(anyString(), captor.capture(), eq(String.class));
 
         HttpEntity<String> entity = captor.getValue();
         String sig = entity.getHeaders().getFirst("X-BlockEndCall-Signature");
@@ -226,7 +226,7 @@ class WebhookServiceTest {
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<HttpEntity<String>> captor = ArgumentCaptor.forClass(HttpEntity.class);
-        verify(restTemplate).postForEntity(any(), captor.capture(), eq(String.class));
+        verify(restTemplate).postForEntity(anyString(), captor.capture(), eq(String.class));
 
         assertThat(captor.getValue().getHeaders().get("X-BlockEndCall-Signature")).isNull();
     }
@@ -262,7 +262,7 @@ class WebhookServiceTest {
         webhookService.notifyConfirmed(
                 new NumberConfirmedEvent(1L, "+5511999990000", "SCAM", 5));
 
-        verify(restTemplate, times(2)).postForEntity(any(), captor.capture(), eq(String.class));
+        verify(restTemplate, times(2)).postForEntity(anyString(), captor.capture(), eq(String.class));
         List<HttpEntity<String>> entities = captor.getAllValues();
 
         String sig1 = entities.get(0).getHeaders().getFirst("X-BlockEndCall-Signature");
