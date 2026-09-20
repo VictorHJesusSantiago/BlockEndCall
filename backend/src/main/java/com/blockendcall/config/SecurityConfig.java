@@ -2,7 +2,9 @@ package com.blockendcall.config;
 
 import com.blockendcall.filter.RateLimitFilter;
 import com.blockendcall.security.JwtAuthFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthFilter jwtAuthFilter;
+    private final ObjectProvider<JwtAuthFilter> jwtAuthFilterProvider;
     private final UserDetailsService userDetailsService;
     private final RateLimitFilter rateLimitFilter;
 
@@ -62,9 +64,15 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint((request, response, authException) ->
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+            )
             .authenticationProvider(authenticationProvider())
-            .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class);
+
+        jwtAuthFilterProvider.ifAvailable(jwtAuthFilter ->
+            http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class));
 
         return http.build();
     }

@@ -3,14 +3,21 @@ name: Backend CI
 on:
   push:
     branches: [main, develop]
-    paths: [backend/**]
+    paths:
+      - backend/**
+      - .github/workflows/backend-ci.yml
   pull_request:
     branches: [main]
-    paths: [backend/**]
+    paths:
+      - backend/**
+      - .github/workflows/backend-ci.yml
+
+permissions:
+  contents: read
 
 jobs:
   test:
-    name: Test & Build
+    name: Lint, test and build
     runs-on: ubuntu-latest
 
     services:
@@ -46,16 +53,23 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Compile with javac lint
+        working-directory: backend
+        run: mvn -B -DskipTests compile
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/blockendcall_test
+          SPRING_DATA_REDIS_HOST: localhost
+
       - name: Run tests
         working-directory: backend
-        run: mvn test
+        run: mvn -B test
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/blockendcall_test
           SPRING_DATA_REDIS_HOST: localhost
 
       - name: Build JAR
         working-directory: backend
-        run: mvn package -DskipTests
+        run: mvn -B package -DskipTests
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -76,3 +90,19 @@ jobs:
       - name: Build image
         working-directory: backend
         run: docker build -t blockendcall-backend:${{ github.sha }} .
+
+  dependency-review:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan dependency changes
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
